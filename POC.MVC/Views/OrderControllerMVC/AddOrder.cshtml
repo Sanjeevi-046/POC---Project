@@ -1,0 +1,9 @@
+﻿@if(ViewBag.Error == null) {
+<p>Hi @ViewBag.UserName, @ViewBag.Message</p>
+} else {
+<p>@Html.Raw(ViewBag.Error)</p>
+}
+
+<button type="button" class="btn">
+    @Html.ActionLink("Product", "GetProductList", "ProductControllerMVC")
+</button>

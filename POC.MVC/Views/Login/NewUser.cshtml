@@ -1,0 +1,46 @@
+﻿@model POC.MVC.Models.LoginModel
+<h1>New User</h1>
+
+@if (TempData["Error"] != null)
+{
+    <h2 style="color:red">@TempData["Error"]</h2>
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="NewUser" >
+            <br />
+            <div class="form-group">
+                <input asp-for="Name" class="form-control" placeholder="Enter Name" required/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input asp-for="Password" type="password" class="form-control" placeholder="Enter Password" required/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input name="RePassword" class="form-control" type="password" placeholder="Re-Enter Password" required/>
+                <span for="RePassword" class="text-danger"></span>
+            </div>
+            <br />
+            <div>
+                <input asp-for="Email" class="form-control" placeholder="Enter the Email" required/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div hidden>
+                <input asp-for="Role" class="form-control" value="Customer" />
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input onclick="location.href='@Url.Action("LoginPage", "Login")'" type="submit" value="Cancel" class="btn btn-outline-danger" />
+                <input asp-action="NewUser" type="submit" value="Save" class="btn btn-outline-primary" />
+            </div>
+        </form>
+            
+        
+    </div>
+</div>

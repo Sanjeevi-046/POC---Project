@@ -1,0 +1,45 @@
+﻿@model IEnumerable<POC.MVC.Models.ProductModel>
+@{
+    ViewData["Title"] = "Product";
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="~/css/stylesheet.css" rel="stylesheet" />
+</head>
+<body>
+
+    <h2>Welcome, @ViewBag.UserName</h2>
+    <div>
+        @if (ViewBag.Role == "Admin")
+        {
+            @Html.ActionLink("Add Product", "AddProductDetail", "ProductControllerMVC")
+
+        }
+        <a asp-action="ExportProductsToExcel" class="btn btn-primary" style="float: right">Download</a>
+
+    </div>
+    <br />
+    <br />
+    <div class="grid-container">
+        @foreach (var product in Model)
+        {
+            <div class="grid-item">
+                <img src="@product.ProductImage" alt="@product.Name">
+                <div class="container">
+                    <h4>@product.Name</h4>
+                    <p><strong>Price:</strong> @product.Price.ToString("C")</p>
+                    <button type="button" class="btn">
+                        @Html.ActionLink("Add to Cart", "AddToCart", "ProductControllerMVC", new { id = product.ProductId }, null)
+                    </button>
+                    <button type="button" class="btn">
+                        @Html.ActionLink("Order Now", "GetProductDetail", "ProductControllerMVC", new { id = product.ProductId }, null)
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+</body>
+</html>

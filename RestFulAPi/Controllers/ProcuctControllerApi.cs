@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DataAccess.Service;
 using POC.DomainModel.Models;
 using POC.DomainModel.TempModel;

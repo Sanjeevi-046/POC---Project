@@ -1,7 +1,9 @@
-﻿using ClosedXML.Excel;
+﻿using AutoMapper;
+using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 using PagedList;
 using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DomainModel.Models;
 using POC.DomainModel.TempModel;
 using System.Data;
@@ -11,11 +13,13 @@ namespace POC.DomainModel.Repository
     public class ProductServiceRepo : IProductRepo
     {
         private readonly DemoProjectContext _context;
-        public ProductServiceRepo(DemoProjectContext context)
+        private readonly IMapper _mapper;
+        public ProductServiceRepo(DemoProjectContext context , IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public async Task<PaginationModel> GetAllProducts(int page, string searchName)
+        public async Task<CommonPaginationModel> GetAllProducts(int page, string searchName)
         {
             int PageSize = 6;
             var ProductData = await _context.Products.ToListAsync();
@@ -33,16 +37,17 @@ namespace POC.DomainModel.Repository
                 Total = count,
                 Product = pageData.ToList()
             };
-            return pagination;
+            return _mapper.Map<CommonPaginationModel>(pagination);
         }
 
-        public async Task<Product> GetProductById(int id)
+        public async Task<CommonProductModel> GetProductById(int id)
         {
             var ProductData = await _context.Products.FindAsync(id);
-            return ProductData;
+            return _mapper.Map<CommonProductModel>(ProductData);
         }
-        public async Task<UserValidationResult> AddProduct(Product product)
+        public async Task<UserValidationResult> AddProduct(CommonProductModel product)
         {
+            var commonProductData = _mapper.Map<Product>(product);
             var ProductData = await _context.Products.FirstOrDefaultAsync(x => x.Name == product.Name);
             if (ProductData == null)
             {
@@ -56,7 +61,7 @@ namespace POC.DomainModel.Repository
                 {
                     product.ProductImage = imageFile;
                 }
-                _context.Products.Add(product);
+                _context.Products.Add(commonProductData);
                 _context.SaveChanges();
                 return new UserValidationResult { IsValid = true, Message = "Product Added Successfully" };
             }

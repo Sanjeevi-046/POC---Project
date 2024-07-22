@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Poc.CommonModel\Poc.CommonModel.csproj" />
+    <ProjectReference Include="..\Poc.CommonModel\POC.CommonModel.csproj" />
   </ItemGroup>
 
 </Project>

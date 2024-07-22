@@ -18,9 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POC.DataAccess", "POC.Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POC.MVC", "POC.MVC\POC.MVC.csproj", "{54271187-4465-46A8-A8B0-879C126FE4E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poc.CommonModel", "Poc.CommonModel\Poc.CommonModel.csproj", "{D6FF6B52-9B2E-45AE-80FF-03A9B6593121}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POC.CommonModel", "Poc.CommonModel\POC.CommonModel.csproj", "{D6FF6B52-9B2E-45AE-80FF-03A9B6593121}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.AutoMapper", "AutoMapper\POC.AutoMapper.csproj", "{C00ADCC4-26C4-4ADC-81C1-036F6185B567}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POC.AutoMapper", "AutoMapper\POC.AutoMapper.csproj", "{C00ADCC4-26C4-4ADC-81C1-036F6185B567}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

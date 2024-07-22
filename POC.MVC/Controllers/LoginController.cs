@@ -1,23 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DomainModel.Models;
-using POC.DomainModel.TempModel;
-using POC.MVC.Models;
-using System.Net;
+using System.Configuration;
 using System.Text;
 
 namespace POC.MVC.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly Uri baseAddress = new Uri("https://localhost:7244/Login");
+        private readonly IConfiguration _configuration;
+        private readonly Uri baseAddress;
         private readonly HttpClient _httpClient;
-        public LoginController()
+        
+        public LoginController( IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpClient = new HttpClient();
+             baseAddress = new Uri(_configuration["BaseUrl:Url"]);
             _httpClient.BaseAddress = baseAddress;
+           
         }
+ 
+
 
         [HttpGet]
         public IActionResult LoginPage()
@@ -29,7 +36,7 @@ namespace POC.MVC.Controllers
         public async Task<IActionResult> LoginPage(Login login)
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "/User", content);
+            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "Login/User", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -73,11 +80,11 @@ namespace POC.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewUser(string RePassword, Login login)
+        public async Task<IActionResult> NewUser(string RePassword, CommonLoginModel login)
         {
             var newUserModel = new UserRegistrationModel { rePassword = RePassword, Login = login };
             StringContent content = new StringContent(JsonConvert.SerializeObject(newUserModel), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "/Users", content);
+            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "Login/Users", content);
             if (response.IsSuccessStatusCode)
             {
 

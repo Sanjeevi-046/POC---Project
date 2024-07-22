@@ -3,6 +3,7 @@ using POC.DomainModel.Models;
 using Poc.CommonModel.Models;
 using System.Security.Cryptography;
 using AutoMapper;
+using POC.CommonModel.Models;
 namespace POC.DomainModel.Repository
 {
     public class LoginSerivceRepo : ILoginRepo
@@ -42,18 +43,16 @@ namespace POC.DomainModel.Repository
             var userData = await context.Logins.FirstOrDefaultAsync(c => c.Name == name);
             if (userData == null)
             {
-                return new UserValidationResult { IsValid = false, Message = "User not found." };
+                return new UserValidationResult { IsValid = false, Message = "The user name or password provided is incorrect." };
             }
             if (userData.Password == password)
             {
-
                 return new UserValidationResult { IsValid = true, Message = "Login successful.", Mail = userData.Email, Role = userData.Role, userId = userData.Id };
             }
             else
             {
                 return new UserValidationResult { IsValid = false, Message = "The user name or password provided is incorrect." };
             }
-
         }
 
         public async Task<UserValidationResult> RegisterUserAsync(CommonLoginModel login, string rePassword)

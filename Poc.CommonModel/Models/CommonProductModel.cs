@@ -1,17 +1,15 @@
-﻿using POC.DomainModel.Models;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace POC.MVC.Models
+namespace POC.CommonModel.Models
 {
-   
-    public class ProductModel
+
+    public class CommonProductModel
     {
         public int ProductId { get; set; }
-        [RegularExpression(@"[a-zA-Z0-9 ]+", ErrorMessage = "Name cannot contain special characters"),Required]
+        [RegularExpression(@"[a-zA-Z0-9 ]+", ErrorMessage = "Name cannot contain special characters"), Required]
         public string Name { get; set; }
         [Required]
-        [Range(100, Double.MaxValue, ErrorMessage = "Price must be above 100")]
+        [Range(100, double.MaxValue, ErrorMessage = "Price must be above 100")]
         public decimal Price { get; set; }
 
         public string Description { get; set; }

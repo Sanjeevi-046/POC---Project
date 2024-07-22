@@ -1,5 +1,5 @@
 ﻿using Poc.CommonModel.Models;
-using POC.DomainModel.Models;
+using POC.CommonModel.Models;
 using POC.DomainModel.Repository;
 using POC.DomainModel.TempModel;
 using System;

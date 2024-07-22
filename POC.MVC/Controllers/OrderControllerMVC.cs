@@ -11,18 +11,17 @@ namespace POC.MVC.Controllers
 {
     public class OrderControllerMVC : Controller
     {
-        Uri baseAddress = new Uri("https://localhost:7244/Order/");
-        private readonly Uri tokenurl = new Uri("https://localhost:7244/Login/refreshToken");
+        private readonly IConfiguration _configuration;
+        private readonly Uri baseAddress;
         private readonly HttpClient _httpClient;
-        private readonly HttpClient _httpClient2;
-        public OrderControllerMVC()
+        public OrderControllerMVC(IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpClient = new HttpClient();
-            _httpClient2 = new HttpClient();
+            baseAddress = new Uri(_configuration["BaseUrl:Url"]);
             _httpClient.BaseAddress = baseAddress;
-            _httpClient2.BaseAddress = tokenurl;
-
         }
+        
         private async Task<string> RefreshTokenAsync()
         {
             var refreshToken = HttpContext.Session.GetString("RefreshToken");
@@ -34,7 +33,7 @@ namespace POC.MVC.Controllers
 
             var refreshContent = new StringContent(refreshToken, Encoding.UTF8, "application/json");
 
-            var refreshResponse = await _httpClient2.PostAsync(tokenurl + $"?refreshToken={refreshToken}", refreshContent);
+            var refreshResponse = await _httpClient.PostAsync( baseAddress + $"Login/refreshToken?refreshToken={refreshToken}", refreshContent);
             refreshResponse.EnsureSuccessStatusCode();
             if (refreshResponse.IsSuccessStatusCode)
             {
@@ -106,7 +105,7 @@ namespace POC.MVC.Controllers
                 StringContent content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
                 //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 //HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"createOrder?orderedProduct={orderedProduct}", content);
-                var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order?orderedProduct={orderedProduct}", content);
+                var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order/Order?orderedProduct={orderedProduct}", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -131,7 +130,7 @@ namespace POC.MVC.Controllers
         //var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order?orderedProduct={orderedProduct}&pincode={pincode}", content); //Order?orderedProduct=3&pincode=sanj
         var token = HttpContext.Session.GetString("Token");
         _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-        HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"Draft?orderedProduct={orderedProduct}&pincode={pincode}", content);
+        HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"Order/Draft?orderedProduct={orderedProduct}&pincode={pincode}", content);
         if (response.IsSuccessStatusCode)
         {
             ViewBag.Message = await response.Content.ReadAsStringAsync();

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using POC.MVC.Models;
+using System.Configuration;
 using System.Net;
 using System.Text;
 
@@ -9,16 +10,16 @@ namespace POC.MVC.Controllers
 {
     public class CartControllerMVC : Controller
     {
-        private readonly Uri baseAddress = new Uri("https://localhost:7244/Cart/");
-        private readonly Uri tokenurl = new Uri("https://localhost:7244/Login/refreshToken");
+        private readonly IConfiguration _configuration;
+        private readonly Uri baseAddress;
         private readonly HttpClient _httpClient;
-        private readonly HttpClient _httpClient2;
-        public CartControllerMVC()
+       
+        public CartControllerMVC(IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpClient = new HttpClient();
-            _httpClient2 = new HttpClient();
+            baseAddress = new Uri(_configuration["BaseUrl:Url"]);
             _httpClient.BaseAddress = baseAddress;
-            _httpClient2.BaseAddress = tokenurl;
 
         }
 
@@ -33,8 +34,7 @@ namespace POC.MVC.Controllers
 
             var refreshContent = new StringContent(refreshToken, Encoding.UTF8, "application/json");
 
-            var refreshResponse = await _httpClient2.PostAsync($"?refreshToken={refreshToken}", refreshContent);
-            //refreshResponse.EnsureSuccessStatusCode();
+            var refreshResponse = await _httpClient.PostAsync($"Login/refreshToken?refreshToken={refreshToken}", refreshContent);
             if (refreshResponse.IsSuccessStatusCode)
             {
                 var refreshData = await refreshResponse.Content.ReadAsStringAsync();
@@ -84,7 +84,7 @@ namespace POC.MVC.Controllers
         {
             var userId = HttpContext.Session.GetString("UserId");
             //HttpResponseMessage response = await _httpClient.GetAsync(baseAddress + $"Cart?id={userId}");
-            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Cart?id={userId}");
+            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Cart/Cart?id={userId}");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
@@ -103,7 +103,7 @@ namespace POC.MVC.Controllers
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(cartModel), Encoding.UTF8, "application/json");
             //HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "Carts", content);
-            var response = await SendAuthorizedRequestAsync(HttpMethod.Post, "Carts", content);
+            var response = await SendAuthorizedRequestAsync(HttpMethod.Post, "Cart/Carts", content);
             if (response.IsSuccessStatusCode)
             {
                 ViewBag.IsCartAdded = "True";

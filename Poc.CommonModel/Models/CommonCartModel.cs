@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace POC.MVC.Models
+namespace POC.CommonModel.Models
 {
-    public class CartModel
+    public class CommonCartModel
     {
         [Key]
         public int CartId { get; set; }

@@ -1,5 +1,5 @@
 ﻿using Poc.CommonModel.Models;
-using POC.DomainModel.Models;
+using POC.CommonModel.Models;
 
 namespace POC.DataAccess.Service
 {

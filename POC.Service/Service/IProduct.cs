@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 
 namespace POC.DataAccess.Service
 {

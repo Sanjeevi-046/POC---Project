@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DomainModel.Models;
+using POC.DomainModel.Repository;
 using POC.DomainModel.TempModel;
 using System;
 using System.Collections.Generic;
@@ -13,33 +16,21 @@ namespace POC.DataAccess.Service
     public class CartService : ICart
     {
         private readonly DemoProjectContext _context;
-        public CartService(DemoProjectContext context)
+        private readonly ICartRepo _cartRepoService;
+        public CartService(ICartRepo cartRepo)
         {
-            _context = context;
+           _cartRepoService = cartRepo;
         }
 
-        public async Task<List<CartTable>> GetCart(int id )
+        public async Task<List<CommonCartModel>> GetCart(int id )
         {
-            var Cartdata = await _context.CartTables.Where(x => x.UserId==id).ToListAsync();
-            if (Cartdata != null) 
-            {
-                    return Cartdata;
-            }
-            return null;
+            var Cartdata = await _cartRepoService.GetCartAsync(id);
+            return Cartdata;
         }
-        public  async Task<UserValidationResult> AddCart(CartTable cartTable)
+        public  async Task<UserValidationResult> AddCart(CommonCartModel cartTable)
         {
-            try
-            {
-                _context.CartTables.Add(cartTable);
-                _context.SaveChanges();
-
-                return new UserValidationResult { IsValid = true, Message = "Product Added Successfully" };
-            }
-            catch (Exception ex)
-            {
-                return new UserValidationResult { IsValid = false, Message = ex.ToString() };
-            }
+            var CartData = await _cartRepoService.AddCartAsync(cartTable);
+            return CartData;
 
         }
     }

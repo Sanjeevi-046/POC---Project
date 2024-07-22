@@ -1,4 +1,6 @@
-﻿namespace Poc.CommonModel.Models
+﻿using POC.CommonModel.Models;
+
+namespace Poc.CommonModel.Models
 {
     public class CommonPaginationModel
     {

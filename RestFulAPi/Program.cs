@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using POC.AutoMapper.Mapper;
 using POC.DataAccess.Service;
 using POC.DomainModel.Models;
+using POC.DomainModel.Repository;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -95,6 +96,12 @@ builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IOrder, OrderService>();
 builder.Services.AddScoped<ICart, CartService>();
+builder.Services.AddScoped<ILoginRepo, LoginSerivceRepo>();
+builder.Services.AddScoped<IProductRepo, ProductServiceRepo>();
+builder.Services.AddScoped<IOrderRepo, OrderServiceRepo>();
+builder.Services.AddScoped<ICartRepo, CartServiceRepo>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

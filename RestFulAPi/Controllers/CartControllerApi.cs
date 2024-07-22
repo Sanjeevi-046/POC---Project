@@ -6,6 +6,7 @@ using POC.DomainModel.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Authorization;
+using POC.CommonModel.Models;
 
 namespace POC.Api.Controllers
 {
@@ -31,7 +32,7 @@ namespace POC.Api.Controllers
             try
             {
                 var result = await _cartService.GetCart(id);
-                var productList = new List<Product>();
+                var productList = new List<CommonProductModel>();
 
                 foreach (var item in result)
                 {
@@ -59,7 +60,7 @@ namespace POC.Api.Controllers
 
         [HttpPost("Carts")]
         [Authorize(Policy = "AdminOrCustomer")]
-        public async Task<IActionResult> AddCart(CartTable cartTable)
+        public async Task<IActionResult> AddCart(CommonCartModel cartTable)
         {
             try
             {

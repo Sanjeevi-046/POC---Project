@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Poc.CommonModel\POC.CommonModel.csproj" />
     <ProjectReference Include="..\RestFulAPi\POC.Api.csproj" />
   </ItemGroup>
 

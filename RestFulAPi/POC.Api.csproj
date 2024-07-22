@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutoMapper\POC.AutoMapper.csproj" />
-    <ProjectReference Include="..\Poc.CommonModel\Poc.CommonModel.csproj" />
+    <ProjectReference Include="..\Poc.CommonModel\POC.CommonModel.csproj" />
     <ProjectReference Include="..\POC.Service\POC.DataAccess.csproj" />
   </ItemGroup>
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DataAccess.Service;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

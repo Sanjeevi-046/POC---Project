@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using POC.CommonModel.Models;
 
 namespace Poc.CommonModel.Models
 {
-    internal class UserRegistrationModel
+    public class UserRegistrationModel
     {
+        public string rePassword { get; set; }
+        public CommonLoginModel Login { get; set; }
     }
 }

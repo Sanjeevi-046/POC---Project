@@ -11,17 +11,15 @@ namespace POC.MVC.Controllers
 {
     public class ProductControllerMVC : Controller
     {
-        private readonly Uri baseAddress = new Uri("https://localhost:7244/Product/");
-        private readonly Uri tokenurl = new Uri("https://localhost:7244/Login/refreshToken");
+        private readonly IConfiguration _configuration;
+        private readonly Uri baseAddress; 
         private readonly HttpClient _httpClient;
-        private readonly HttpClient _httpClient2;
-        public ProductControllerMVC()
+        public ProductControllerMVC(IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpClient = new HttpClient ();
-            _httpClient2 = new HttpClient ();
-            _httpClient.BaseAddress= baseAddress;
-            _httpClient2.BaseAddress= tokenurl;
-           
+            baseAddress = new Uri(_configuration["BaseUrl:Url"]); 
+            _httpClient.BaseAddress= baseAddress; 
         }
         private async Task<string> RefreshTokenAsync()
         {
@@ -34,8 +32,7 @@ namespace POC.MVC.Controllers
             
             var refreshContent = new StringContent( refreshToken ,Encoding.UTF8,"application/json");
             
-            var refreshResponse = await _httpClient2.PostAsync($"?refreshToken={refreshToken}", refreshContent);
-            //refreshResponse.EnsureSuccessStatusCode();
+            var refreshResponse = await _httpClient.PostAsync($"Login/refreshToken?refreshToken={refreshToken}", refreshContent);
             if (refreshResponse.IsSuccessStatusCode)
             {
                 var refreshData = await refreshResponse.Content.ReadAsStringAsync();
@@ -97,7 +94,7 @@ namespace POC.MVC.Controllers
             }
             //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             //HttpResponseMessage response = await _httpClient.GetAsync($"Products?page={page}&searchTerm={searchName}");
-            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Products?page={page}&searchTerm={searchName}"); //page=1&searchName=I 
+            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Product/Products?page={page}&searchTerm={searchName}"); //page=1&searchName=I 
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
@@ -120,7 +117,7 @@ namespace POC.MVC.Controllers
             ViewBag.UserId = userId;
             //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             //HttpResponseMessage response = await _httpClient.GetAsync(baseAddress + $"getProductById?id={id}");
-            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Product?id={id}");
+            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Product/Product?id={id}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -169,7 +166,7 @@ namespace POC.MVC.Controllers
             //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             StringContent content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
             //HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "AddProduct", content);
-            var response = await SendAuthorizedRequestAsync(HttpMethod.Post, "AddProduct", content);
+            var response = await SendAuthorizedRequestAsync(HttpMethod.Post, "Product/AddProduct", content);
 
             if (response.IsSuccessStatusCode)
             { 
@@ -184,7 +181,7 @@ namespace POC.MVC.Controllers
         public async Task<IActionResult> ExportProductsToExcel()
         {
             //HttpResponseMessage response = await _httpClient.GetAsync( "ExportProductsToExcel");
-            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, "ExportProductsToExcel");
+            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, "Product/ExportProductsToExcel");
             if (response.IsSuccessStatusCode)
             {
                 var stream = await response.Content.ReadAsStreamAsync();

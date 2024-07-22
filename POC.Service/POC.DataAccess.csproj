@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Poc.CommonModel\Poc.CommonModel.csproj" />
+    <ProjectReference Include="..\Poc.CommonModel\POC.CommonModel.csproj" />
     <ProjectReference Include="..\POC.DomainModel\POC.DomainModel.csproj" />
   </ItemGroup>
 

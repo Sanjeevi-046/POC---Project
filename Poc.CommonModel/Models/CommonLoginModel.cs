@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace POC.MVC.Models
+namespace POC.CommonModel.Models
 {
-    public class LoginModel
+    public class CommonLoginModel
     {
         public int Id { get; set; }
 

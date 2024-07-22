@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DomainModel.Models;
 
 

@@ -1,4 +1,6 @@
-﻿using POC.DomainModel.Models;
+﻿using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
+using POC.DomainModel.Models;
 using POC.DomainModel.TempModel;
 using System;
 using System.Collections.Generic;
@@ -10,8 +12,8 @@ namespace POC.DataAccess.Service
 {
     public interface ICart
     {
-        Task<UserValidationResult> AddCart(CartTable cartTable);
-        Task<List<CartTable>> GetCart(int id);
+        Task<UserValidationResult> AddCart(CommonCartModel cartTable);
+        Task<List<CommonCartModel>> GetCart(int id);
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DomainModel.Models;
 using System;
 using System.Collections.Generic;

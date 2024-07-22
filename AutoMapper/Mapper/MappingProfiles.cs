@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using Poc.CommonModel.Models;
+﻿using AutoMapper;
 using POC.DomainModel.Models;
+using POC.CommonModel.Models;
+using Poc.CommonModel.Models;
 using POC.DomainModel.TempModel;
+
 
 namespace POC.AutoMapper.Mapper
 {

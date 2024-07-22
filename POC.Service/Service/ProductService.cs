@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using System.Data;
 using Poc.CommonModel.Models;
 using POC.DomainModel.Repository;
+using POC.CommonModel.Models;
 
 namespace POC.DataAccess.Service
 {
@@ -24,7 +25,6 @@ namespace POC.DataAccess.Service
             var ProductData = await _productRepoService.GetAllProducts(page, searchName);
             return ProductData;
         }
-
         public async Task<CommonProductModel> GetProductByIdAsync(int id)
         {
             var ProductData = await _productRepoService.GetProductById(id);
@@ -36,15 +36,10 @@ namespace POC.DataAccess.Service
             return ProductData;
             
         }
-
         public async Task<MemoryStream> DownloadExcel()
         {
             var Files = await _productRepoService.DownloadExcelFile();
             return Files;
         }
-
-
-
-
     }
 }

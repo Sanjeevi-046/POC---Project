@@ -1,15 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Poc.CommonModel.Models;
-using POC.DomainModel.Models;
+﻿using Poc.CommonModel.Models;
+using POC.CommonModel.Models;
 using POC.DomainModel.Repository;
-using POC.DomainModel.TempModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace POC.DataAccess.Service
 {

@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<POC.MVC.Models.ProductModel>
 @{
     ViewData["Title"] = "Product";
-
+    int currentPage = int.Parse(ViewBag.CurrentPage) ?? 1;
+    int totalPages = int.Parse(ViewBag.TotalPages) ?? 1;
 }
 <!DOCTYPE html>
 <html>
@@ -14,11 +15,32 @@
     <div>
         @if (ViewBag.Role == "Admin")
         {
-            @Html.ActionLink("Add Product", "AddProductDetail", "ProductControllerMVC")
+            @* <a class="btn btn-primary" onclick="@Html.ActionLink("Add Product", "AddProductDetail", "ProductControllerMVC")"> </a> *@
+            <a class="btn btn-primary" href="/ProductControllerMVC/AddProductDetail">Add Product</a>
+            
 
         }
         <a asp-action="ExportProductsToExcel" class="btn btn-primary" style="float: right">Download</a>
+        <br />
+        <a asp-action="GetCart" asp-controller="CartControllerMVC" class="btn btn-primary" style="float: right">Cart</a>
 
+    </div>
+    <br />
+    <div>
+        <form asp-action="GetProductList" method="get">
+            <input type="text" name="searchName" placeholder="Search products..." value="@ViewBag.searchName" />
+            <button type="submit">Search</button>
+           
+            @if (ViewBag.IsCartAdded == "true")
+            {
+                <p><div style="color: green;">Added to the Cart</div></p>
+            }
+                @if (ViewBag.IsCartAdded == "false")
+            {
+                <p><div style="color: red;">Not Added to the Cart</div></p>
+            }
+            
+        </form>
     </div>
     <br />
     <br />
@@ -26,13 +48,15 @@
         @foreach (var product in Model)
         {
             <div class="grid-item">
-                <img src="@product.ProductImage" alt="@product.Name">
+                <img src="data:image;base64,@Convert.ToBase64String(product.ProductImage)" alt="@product.Name">
                 <div class="container">
                     <h4>@product.Name</h4>
                     <p><strong>Price:</strong> @product.Price.ToString("C")</p>
-                    <button type="button" class="btn">
-                        @Html.ActionLink("Add to Cart", "AddToCart", "ProductControllerMVC", new { id = product.ProductId }, null)
-                    </button>
+                    <form asp-controller="CartControllerMVC" asp-action="AddCart" method="post">
+                        <input type="hidden" name="UserId" value="@int.Parse(ViewBag.UserId)" />
+                        <input type="hidden" name="ProductId" value="@product.ProductId" />
+                        <button type="submit" class="btn btn-link">Add to Cart</button>
+                    </form>
                     <button type="button" class="btn">
                         @Html.ActionLink("Order Now", "GetProductDetail", "ProductControllerMVC", new { id = product.ProductId }, null)
                     </button>
@@ -40,6 +64,29 @@
             </div>
         }
     </div>
-
+    <div style="justify-content:center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @if (currentPage > 1)
+                {
+                    <li class="page-item">
+                        @Html.ActionLink("« Previous", "GetProductList", new { page = currentPage - 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                    </li>
+                }
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        @Html.ActionLink(i.ToString(), "GetProductList", new { page = i, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                    </li>
+                }
+                @if (currentPage < totalPages)
+                {
+                    <li class="page-item">
+                        @Html.ActionLink("Next »", "GetProductList", new { page = currentPage + 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
 </body>
 </html>

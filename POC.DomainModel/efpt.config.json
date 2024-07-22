@@ -15,6 +15,10 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[dbo].[CartTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Logins]",
          "ObjectType": 0
       },
@@ -28,6 +32,10 @@
       },
       {
          "Name": "[dbo].[refreshtoken]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[temporderTable]",
          "ObjectType": 0
       },
       {

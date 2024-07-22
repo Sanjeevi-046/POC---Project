@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Poc.CommonModel.Models;
 using POC.DomainModel.Models;
+using POC.DomainModel.Repository;
 using POC.DomainModel.TempModel;
 using System;
 using System.Collections.Generic;
@@ -13,121 +15,52 @@ namespace POC.DataAccess.Service
 {
     public class LoginService : ILogin
     {
-        private readonly DemoProjectContext context;
-        private readonly ILogger<LoginService> _logger;
+        private readonly ILoginRepo _loginRepoService;
+       
 
-        public LoginService(DemoProjectContext context, ILogger<LoginService> logger)
+        public LoginService(ILoginRepo loginRepo)
         {
-            this.context = context;
-            _logger = logger;
+            _loginRepoService = loginRepo;
         }
-        public async Task<UserValidationResult> getUserId(string userName)
+        public async Task<UserValidationResult> GetUserId(string userName)
         {
-            var user = await context.Logins.FirstOrDefaultAsync(u => u.Name == userName);
-            if (user != null)
-            {
-                return new UserValidationResult { IsValid = true, Message = user.Id.ToString() };
-            }
-            return new UserValidationResult { IsValid = false, Message = "Name not found" };
+            var userData = await _loginRepoService.GetUserIdAsync(userName);
+            return userData;
         }
-        public async Task<Login> GetLoginAsync(string userId)
+        public async Task<CommonLoginModel> GetLoginAsync(string userId)
         {
-            var user = await context.Logins.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
-            if (user != null)
-            {
-                return user;
-            }
-            else
-            {
-                return null;
-            }
+            var userData = await _loginRepoService.GetLoginUserAsync(userId);
+            return userData;
         }
 
         public async Task<UserValidationResult> ValidateUserAsync(string name, string password)
         {
-            var user = await context.Logins.FirstOrDefaultAsync(c => c.Name == name);
-            if (user == null)
-            {
-                return new UserValidationResult { IsValid = false, Message = "User not found." };
-            }
-            if (user.Password == password)
-            {
-
-                return new UserValidationResult { IsValid = true, Message = "Login successful.", Mail = user.Email ,Role=user.Role ,userId=user.Id};
-            }
-            else
-            {
-                return new UserValidationResult { IsValid = false, Message = "The password doesn't match." };
-            }
+            var userData = await _loginRepoService.ValidateUserAsync(name, password);
+            return userData;
 
         }
 
-        public async Task<UserValidationResult> RegisterUserAsync(Login login, string rePassword)
+        public async Task<UserValidationResult> RegisterUserAsync(CommonLoginModel login, string rePassword)
         {
-            var userdetail = new User();
-            var user = context.Logins.FirstOrDefault(u => u.Name == login.Name);
-            login.Role = "Customer";
-            if (user == null)
-            {
-                if (rePassword == login.Password)
-                {
-                    userdetail.Email = login.Email;
-                    userdetail.Name = login.Name;
-                    context.Users.Add(userdetail);
-                    context.Logins.Add(login);
-                    await context.SaveChangesAsync();
-                    return new UserValidationResult { IsValid = true, Message = "Registered successfully." };
-                }
-                else
-                {
-                    return new UserValidationResult { IsValid = false, Message = "Password miss match." };
-                }
-            }
-            else
-            {
-                return new UserValidationResult { IsValid = false, Message = "The User Name is already registered." };
-            }
+         
+            var userData = await _loginRepoService.RegisterUserAsync(login, rePassword);
+            return userData;
         }
 
-        public async Task<Refreshtoken> GenerateRefreshToken(int userId)
+        public async Task<CommonRefereshToken> GenerateRefreshToken(int userId)
         {
-            var id = context.Refreshtokens.FirstOrDefaultAsync(u => u.Id == userId);
-            if (id != null)
-            {
-                var refreshToken = new Refreshtoken
-                {
-                    RefreshToken1 = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                    ExpirationTime = DateTime.UtcNow.AddDays(1),
-                    UserId = userId
-                };
-
-                context.Refreshtokens.Add(refreshToken);
-                await context.SaveChangesAsync();
-
-                return refreshToken;
-            }
-            else
-            {
-                return null;
-            }
+            var TokenId = await _loginRepoService.GetRefreshTokenAsync(userId);
+            return TokenId;
         }
-
-        public async Task<Refreshtoken> ValidateRefreshToken(string token)
+        public async Task<CommonRefereshToken> ValidateRefreshToken(string token)
         {
-            var refreshToken = await context.Refreshtokens
-                .FirstOrDefaultAsync(t => t.RefreshToken1 == token && t.ExpirationTime > DateTime.UtcNow);
-
+            var refreshToken = await _loginRepoService.ValidateRefreshTokenAsync(token);
             return refreshToken;
         }
-
-        public async Task InvalidateRefreshToken(string token)
+        public async Task<UserValidationResult> InvalidateRefreshToken(string token)
         {
-            var refreshToken = await context.Refreshtokens.FirstOrDefaultAsync(t => t.RefreshToken1 == token);
-            if (refreshToken != null)
-            {
-                context.Refreshtokens.Remove(refreshToken);
-                await context.SaveChangesAsync();
-            }
+            var refreshToken = await _loginRepoService.InvalidateRefreshTokenAsync(token);
+            return refreshToken;
         }
 
     }

@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using POC.AutoMapper.Mapper;
 using POC.DataAccess.Service;
 using POC.DomainModel.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -25,7 +27,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-
+//for calling another controller using httpclient we need to addhttpclient
+builder.Services.AddHttpClient();
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"];
 
@@ -91,6 +94,7 @@ builder.Services.AddSwaggerGen(option =>
 builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IOrder, OrderService>();
+builder.Services.AddScoped<ICart, CartService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

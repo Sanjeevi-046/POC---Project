@@ -26,7 +26,4 @@ public partial class Login
 
     [StringLength(50)]
     public string Role { get; set; }
-
-    [InverseProperty("IdNavigation")]
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

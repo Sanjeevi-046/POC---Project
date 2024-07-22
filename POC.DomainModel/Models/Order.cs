@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace POC.DomainModel.Models;
 
-[Index("Id", Name = "IX_Orders_Id")]
 [Index("ProductId", Name = "IX_Orders_ProductId")]
 public partial class Order
 {
@@ -25,12 +24,4 @@ public partial class Order
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal OrderPrice { get; set; }
-
-    [ForeignKey("Id")]
-    [InverseProperty("Orders")]
-    public virtual Login IdNavigation { get; set; }
-
-    [ForeignKey("ProductId")]
-    [InverseProperty("Orders")]
-    public virtual Product Product { get; set; }
 }

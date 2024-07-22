@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Poc.CommonModel.Models;
 using POC.DataAccess.Service;
-using POC.DomainModel.Models;
-using POC.DomainModel.TempModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -24,26 +22,23 @@ namespace POC.Api.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("Get")]
+        [HttpGet]
         public IActionResult Get()
         {
-            //wrong get should be idempotent
-            //var data = "HI";
             return Ok();
         }
-        [HttpGet("getID")]
+        [HttpGet("ID")]
         public async Task<IActionResult> GetId(string name)
         {
-            var result = await _loginService.getUserId(name);
+            var result = await _loginService.GetUserId(name);
             if (result.IsValid)
             {
                 return Ok(result.Message);
             }
             return BadRequest();
         }
-
-        [HttpPost("checkUser")]
-        public async Task<IActionResult> CheckUser([Bind] Login login)
+        [HttpPost("User")]
+        public async Task<IActionResult> CheckUser(CommonLoginModel login)
         {
             var result = await _loginService.ValidateUserAsync(login.Name, login.Password);
 
@@ -51,10 +46,10 @@ namespace POC.Api.Controllers
             {
                 var claims = new[]
                 {
-            new Claim(ClaimTypes.Name, login.Name),
-            new Claim(ClaimTypes.Email, result.Mail),
-            new Claim(ClaimTypes.Role, result.Role)
-        };
+                    new Claim(ClaimTypes.Name, login.Name),
+                    new Claim(ClaimTypes.Email, result.Mail),
+                    new Claim(ClaimTypes.Role, result.Role)
+                };
 
                 var jwtSettings = _configuration.GetSection("JwtSettings");
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
@@ -64,7 +59,8 @@ namespace POC.Api.Controllers
                     audience: jwtSettings["Audience"],
                     claims: claims,
                     expires: DateTime.Now.AddMinutes(double.Parse(jwtSettings["ExpirationMinutes"])),
-                    signingCredentials: creds);
+                    signingCredentials: creds
+                );
 
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -77,12 +73,9 @@ namespace POC.Api.Controllers
                 return BadRequest(result.Message);
             }
         }
-
-
-        [HttpPost("newUser")]
+        [HttpPost("Users")]
         public async Task<IActionResult> NewUser(UserRegistrationModel model)
         {
-
             var result = await _loginService.RegisterUserAsync(model.Login, model.rePassword);
             if (result.IsValid)
             {
@@ -92,11 +85,9 @@ namespace POC.Api.Controllers
             {
                 return NotFound(result.Message);
             }
-
-
         }
         [HttpPost("refreshToken")]
-        public async Task<IActionResult> RefreshToken( string refreshToken)
+        public async Task<IActionResult> RefreshToken(string refreshToken)
         {
             var validRefreshToken = await _loginService.ValidateRefreshToken(refreshToken);
 
@@ -104,13 +95,11 @@ namespace POC.Api.Controllers
             {
                 return Unauthorized("Invalid refresh token");
             }
-
             var user = await _loginService.GetLoginAsync(validRefreshToken.UserId.ToString());
             if (user == null)
             {
                 return Unauthorized("User not found");
             }
-
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.Name),
@@ -126,18 +115,15 @@ namespace POC.Api.Controllers
                 audience: jwtSettings["Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(double.Parse(jwtSettings["ExpirationMinutes"])),
-                signingCredentials: creds);
-
+                signingCredentials: creds
+            );
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
             var newRefreshToken = await _loginService.GenerateRefreshToken(validRefreshToken.UserId);
            
-                await _loginService.InvalidateRefreshToken(refreshToken);
+            await _loginService.InvalidateRefreshToken(refreshToken);
 
-                return Ok(new { Token = tokenString, RefreshToken = newRefreshToken.RefreshToken1 });
-            
+            return Ok(new { Token = tokenString, RefreshToken = newRefreshToken.RefreshToken1 });   
         }
-
-
     }
 }

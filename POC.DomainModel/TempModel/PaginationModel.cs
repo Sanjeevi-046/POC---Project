@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace POC.DomainModel.TempModel
 {
-    public class UserRegistrationModel
+    public class PaginationModel
     {
-        public string rePassword { get; set; }
-        public Login Login { get; set; }
+        public int Page { get; set; }
+        public int Total { get; set; }
+        public List<Product> Product { get; set; }
     }
 }

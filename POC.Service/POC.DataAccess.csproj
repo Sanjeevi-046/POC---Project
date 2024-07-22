@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.102.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="PagedList" Version="1.17.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Poc.CommonModel\Poc.CommonModel.csproj" />
     <ProjectReference Include="..\POC.DomainModel\POC.DomainModel.csproj" />
   </ItemGroup>
 

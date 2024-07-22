@@ -13,6 +13,8 @@ public partial class DemoProjectContext : DbContext
     {
     }
 
+    public virtual DbSet<CartTable> CartTables { get; set; }
+
     public virtual DbSet<Login> Logins { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
@@ -21,13 +23,42 @@ public partial class DemoProjectContext : DbContext
 
     public virtual DbSet<Refreshtoken> Refreshtokens { get; set; }
 
+    public virtual DbSet<TemporderTable> TemporderTables { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CartTable>(entity =>
+        {
+            entity.HasKey(e => e.CartId).HasName("PK__CartTabl__51BCD7B796CCBBCD");
+        });
+
+        modelBuilder.Entity<Login>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_Id");
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.OrderId).HasName("PK_OrderId");
+        });
+
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasKey(e => e.ProductId).HasName("PK_ProductId");
+        });
+
         modelBuilder.Entity<Refreshtoken>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__refresht__3213E83F9469E7F6");
+        });
+
+        modelBuilder.Entity<TemporderTable>(entity =>
+        {
+            entity.HasKey(e => e.OrderId).HasName("PK__temporde__C3905BCFDC8E240C");
+
+            entity.Property(e => e.OrderId).ValueGeneratedNever();
         });
 
         OnModelCreatingPartial(modelBuilder);

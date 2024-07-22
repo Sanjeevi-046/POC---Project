@@ -23,9 +23,6 @@ public partial class Product
     [Required]
     public string Description { get; set; }
 
-    [Required]
-    public string ProductImage { get; set; }
-
     public bool IsAvailable { get; set; }
 
     public bool IsQuantityAvailable { get; set; }
@@ -33,6 +30,5 @@ public partial class Product
     [Column("productAvailable")]
     public int ProductAvailable { get; set; }
 
-    [InverseProperty("Product")]
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public byte[] ProductImage { get; set; }
 }

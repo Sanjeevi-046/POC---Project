@@ -9,7 +9,7 @@
     <h2 style="text-align:center">Product</h2>
 
     <div class="card">
-        <img src="@Model.ProductImage" alt="@Model.Name">
+        <img src="data:image;base64,@Convert.ToBase64String(Model.ProductImage)" alt="@Model.Name">
         <h4>@Model.Name</h4>
         <p>@Model.Description</p>
         <p><strong>Price:</strong> <span id="unit-price">@Model.Price.ToString("C")</span></p>
@@ -19,6 +19,7 @@
             <input type="hidden" name="productId" value="@Model.ProductId" />
             <input type="hidden" name="userId" value="@ViewBag.UserId" />
             <input type="hidden" name="OrderPrice" id="order-price" value="@Model.Price" />
+            @* <input type="hidden" name="OrderDate" id="orderDate" value="@DateTime.UtcNow" /> *@
             <input type="hidden" name="orderedProduct" id="ordered-product" value="1" />
             @if (Model.IsAvailable && Model.IsQuantityAvailable)
             {
@@ -30,13 +31,19 @@
             }
             @if (Model.IsAvailable)
             {
-                <p><button type="submit" class="common-style">Order Now</button></p>
+                <p><button type="submit"  class="common-style">Order Now</button></p>
             }
             else
             {
                 <p style="animation-timing-function">Out of Service</p>
             }
+            @* <div>
+                <p><button type="submit" formaction="/OrderControllerMVC/SaveAsDraft" method="post" class="common-style">Save as draft</button></p>
+            </div> *@
         </form>
+    </div>
+    <div>
+        
     </div>
     <script>
         function changeQuantity(amount) {

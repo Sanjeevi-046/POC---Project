@@ -1,4 +1,6 @@
-﻿using POC.DomainModel.Models;
+﻿using Poc.CommonModel.Models;
+using POC.DomainModel.Models;
+using POC.DomainModel.Repository;
 using POC.DomainModel.TempModel;
 using System;
 using System.Collections.Generic;
@@ -10,36 +12,24 @@ namespace POC.DataAccess.Service
 {
     public class OrderService : IOrder
     {
-        private readonly DemoProjectContext _context;
+        private readonly IOrderRepo _orderRepoService;
 
-        public OrderService(DemoProjectContext context)
+        public OrderService(IOrderRepo orderRepo)
         {
-            _context = context;
+            _orderRepoService = orderRepo;
         }
 
-        public async Task<UserValidationResult> CreateOrderAsync(Order order, int orderedProduct)
+        public async Task<UserValidationResult> CreateOrderAsync(CommonOrderModel order, int orderedProduct)
         {
-            try
-            {
-                order.OrderDate = DateTime.Now;
-                _context.Orders.Add(order);
+            
+                var OrderData = await _orderRepoService.CreateOrder(order,orderedProduct);
+            return OrderData;
 
-                var product = await _context.Products.FindAsync(order.ProductId);
-                if (product != null)
-                {
-                    product.ProductAvailable -= orderedProduct;
-                    if (product.ProductAvailable <= 0)
-                    {
-                        product.IsAvailable = false;
-                    }
-                }
-                _context.SaveChangesAsync();
-                return new UserValidationResult { IsValid = true, Message = $"Your {product.Name} Order Has been Placed SuccessFully." };
-            }
-            catch (Exception ex)
-            {
-                return new UserValidationResult { IsValid = false, Message = ex.Message };
-            }
+        }
+        public async Task<UserValidationResult> CreateOrderAsync(CommonTemporderTable order, int orderedProduct,string SaveAsDraft)
+        {
+            var OrderData = await _orderRepoService.CreateOrder(order, orderedProduct,SaveAsDraft);
+            return OrderData;
 
         }
     }

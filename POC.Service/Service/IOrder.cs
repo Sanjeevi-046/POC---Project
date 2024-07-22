@@ -1,15 +1,11 @@
-﻿using POC.DomainModel.Models;
-using POC.DomainModel.TempModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Poc.CommonModel.Models;
+using POC.DomainModel.Models;
 
 namespace POC.DataAccess.Service
 {
     public interface IOrder
     {
-        Task<UserValidationResult> CreateOrderAsync(Order order, int orderedProduct);
+        Task<UserValidationResult> CreateOrderAsync(CommonOrderModel order, int orderedProduct);
+        Task<UserValidationResult> CreateOrderAsync(CommonTemporderTable order, int orderedProduct,string SaveAsaDraft);
     }
 }

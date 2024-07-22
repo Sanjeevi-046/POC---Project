@@ -11,7 +11,7 @@ namespace POC.MVC.Controllers
 {
     public class LoginController : Controller
     {
-        Uri baseAddress = new Uri("https://localhost:7244/Login");
+        private readonly Uri baseAddress = new Uri("https://localhost:7244/Login");
         private readonly HttpClient _httpClient;
         public LoginController()
         {
@@ -19,22 +19,17 @@ namespace POC.MVC.Controllers
             _httpClient.BaseAddress = baseAddress;
         }
 
-        
         [HttpGet]
         public IActionResult LoginPage()
         {
-            HttpResponseMessage response = _httpClient.GetAsync(baseAddress + "/Get").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                Console.WriteLine(response.Content);
-            }
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> LoginPage(Login login)
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "/checkUser", content);
+            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "/User", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -47,7 +42,7 @@ namespace POC.MVC.Controllers
                 HttpContext.Session.SetString("Token", token);
                 HttpContext.Session.SetString("RefreshToken", RefershToken);
                 HttpContext.Session.SetString("UserName", login.Name);
-                HttpResponseMessage userIdResponse = await _httpClient.GetAsync(baseAddress + "/getID?name=" + login.Name);
+                HttpResponseMessage userIdResponse = await _httpClient.GetAsync(baseAddress + "/ID?name=" + login.Name);
                 if (userIdResponse.IsSuccessStatusCode)
                 {
                     var userId = await userIdResponse.Content.ReadAsStringAsync();
@@ -70,17 +65,19 @@ namespace POC.MVC.Controllers
                 return View();
             }
         }
+
         [HttpGet]
         public IActionResult NewUser()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> NewUser(string RePassword, Login login)
         {
             var newUserModel = new UserRegistrationModel { rePassword = RePassword, Login = login };
             StringContent content = new StringContent(JsonConvert.SerializeObject(newUserModel), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "/newUser", content);
+            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + "/Users", content);
             if (response.IsSuccessStatusCode)
             {
 

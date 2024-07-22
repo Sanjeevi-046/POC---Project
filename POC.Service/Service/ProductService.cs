@@ -1,80 +1,46 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
+using PagedList;
 using POC.DomainModel.Models;
 using POC.DomainModel.TempModel;
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Poc.CommonModel.Models;
+using POC.DomainModel.Repository;
 
 namespace POC.DataAccess.Service
 {
     public class ProductService : IProduct
     {
-        private readonly DemoProjectContext _context;
+        private readonly IProductRepo _productRepoService;
 
-        public ProductService(DemoProjectContext context)
+        public ProductService(IProductRepo productRepo)
         {
-            _context = context;
+            _productRepoService = productRepo;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<CommonPaginationModel> GetAllProductsAsync(int page , string searchName)
         {
-            var data = await _context.Products.ToListAsync();
-            return data;
+            var ProductData = await _productRepoService.GetAllProducts(page, searchName);
+            return ProductData;
         }
 
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<CommonProductModel> GetProductByIdAsync(int id)
         {
-            var data = await _context.Products.FindAsync(id);
-            return data;
+            var ProductData = await _productRepoService.GetProductById(id);
+            return ProductData;
         }
-        public async Task<UserValidationResult> addProduct (Product product)
+        public async Task<UserValidationResult> AddProductAsync(CommonProductModel product)
         {
-            var data = await _context.Products.FirstOrDefaultAsync(x=>x.Name==product.Name);
-            if (data == null) 
-            {
-               if (product.ProductAvailable > 0)
-                {
-                    product.IsAvailable = true;
-                    product.IsQuantityAvailable = true;
-                }
-            _context.Products.Add(product);
-            _context.SaveChanges();
-                return new UserValidationResult { IsValid = true, Message = "Product Added Successfully"};
-            }
-            return new UserValidationResult { IsValid = false, Message = "Product has Already exixted" };
+            var ProductData = await _productRepoService.AddProduct(product);
+            return ProductData;
+            
         }
 
         public async Task<MemoryStream> DownloadExcel()
         {
-            DataTable dt = new DataTable("Products");
-            dt.Columns.AddRange(new DataColumn[] {
-                new DataColumn("Name"),
-                new DataColumn("Price"),
-                new DataColumn("Description"),
-                new DataColumn("ProductImage")
-        
-            });
-
-            var products = await _context.Products.ToListAsync();
-
-            foreach (var product in products)
-            {
-                dt.Rows.Add( product.Name, product.Price, product.Description,
-                            product.ProductImage);
-            }
-
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                wb.Worksheets.Add(dt);
-                var stream = new MemoryStream();
-                wb.SaveAs(stream);
-                stream.Position = 0; 
-                return stream;
-            }
+            var Files = await _productRepoService.DownloadExcelFile();
+            return Files;
         }
 
 

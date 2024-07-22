@@ -99,7 +99,6 @@ namespace POC.MVC.Controllers
         public async Task<IActionResult> AddOrder(OrderModel order, int orderedProduct)
         {
             order.OrderDate = DateTime.Now;
-
             if (ModelState.IsValid)
             {
                 var userName = HttpContext.Session.GetString("UserName");
@@ -107,7 +106,7 @@ namespace POC.MVC.Controllers
                 StringContent content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
                 //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 //HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"createOrder?orderedProduct={orderedProduct}", content);
-                var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"createOrder?orderedProduct={orderedProduct}", content);
+                var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order?orderedProduct={orderedProduct}", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -117,15 +116,33 @@ namespace POC.MVC.Controllers
                 }
                 else
                 {
-                    ViewBag.Error = await response.Content.ReadAsStringAsync();
-                    ViewBag.Message = null;
-                    return View();
+                    return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
                 }
             }
             ViewBag.Error = "Model Invalid";
             ViewBag.Message = null;
+            return RedirectToAction("UnAuthorized", "ErrorHandling", "Model Invalid error");
+        }
+
+    [HttpPost]
+    public async Task<IActionResult> SaveAsDraft(OrderModel order, int orderedProduct, string pincode = "draft")
+    {
+        StringContent content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
+        //var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order?orderedProduct={orderedProduct}&pincode={pincode}", content); //Order?orderedProduct=3&pincode=sanj
+        var token = HttpContext.Session.GetString("Token");
+        _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"Draft?orderedProduct={orderedProduct}&pincode={pincode}", content);
+        if (response.IsSuccessStatusCode)
+        {
+            ViewBag.Message = await response.Content.ReadAsStringAsync();
+            ViewBag.Error = null;
             return View();
         }
+        else
+        {
+            return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
+        }
+    }
 
     }
 }

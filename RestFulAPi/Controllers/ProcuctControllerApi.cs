@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Poc.CommonModel.Models;
 using POC.DataAccess.Service;
 using POC.DomainModel.Models;
 using POC.DomainModel.TempModel;
@@ -11,75 +11,103 @@ namespace POC.Api.Controllers
 {
     [Route("Product")]
     [ApiController]
-    
     public class ProcuctControllerApi : ControllerBase
     {
         private readonly IProduct _productService;
-        public ProcuctControllerApi(IProduct productService)
+        
+        public ProcuctControllerApi(IProduct productService )
         {
             _productService = productService;
+        }
 
-        }
         [Authorize(Policy = "AdminOrCustomer")]
-        [HttpGet("getProductList")]
-        public async Task<IActionResult> getProductList()
+        [HttpGet("Products")]
+        public async Task<IActionResult> GetProductList(int page =1, string searchTerm="")
         {
-            var products = await _productService.GetAllProductsAsync();
-            
-            return Ok(products);
+            try
+            {
+                var products = await _productService.GetAllProductsAsync(page, searchTerm);
+                return Ok(products);
+            }
+            catch (Exception ex) 
+            {
+                CustomFileLogger.LogError("An error occurred while processing your request.", ex);
+                return StatusCode(500, "Internal server error");
+            }
         }
+
         [Authorize(Policy = "AdminOrCustomer")]
-        [HttpGet("getProductById")]
+        [HttpGet("Product")]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
-            if (product == null)
+            try
             {
-                return NotFound();
+                var product = await _productService.GetProductByIdAsync(id);
+                if (product == null)
+                {
+                    Exception exception = new Exception("Error");
+                    CustomFileLogger.LogError("An error occurred while processing your request.", exception);
+                    return StatusCode(500, "Internal server error");
+                }
+                return Ok(product);
             }
-            return Ok(product);
+            catch (Exception ex)
+            {
+                CustomFileLogger.LogError("An error occurred while processing your request.", ex);
+                return StatusCode(500, "Internal server error");
+            }
         }
+
         [Authorize(Policy = "Admin")]
         [HttpPost("AddProduct")]
-        public async Task<IActionResult> AddProduct(Product product)
+        public async Task<IActionResult> AddProduct(CommonProductModel product)
         {
-            var result = await _productService.addProduct(product);
-            if (result.IsValid)
+            try
             {
-                return Ok(result);
+                var result = await _productService.AddProductAsync(product);
+                if (result.IsValid)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Message);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(result.Message);
+                CustomFileLogger.LogError("An error occurred while processing your request.", ex);
+                return StatusCode(500, "Internal server error");
             }
         }
+
         [Authorize(Policy = "AdminOrCustomer")]
         [HttpGet("ExportProductsToExcel")]
         public async Task<IActionResult> ExportProductsToExcel()
         {
-            var stream = await _productService.DownloadExcel();
-            if (stream != null)
+            try
             {
-                // Set content type and headers for the response
-                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                var fileName = "Products.xlsx";
-
-                // Set response headers
-                Response.Headers.Add("Content-Disposition", new ContentDispositionHeaderValue("attachment")
+                var stream = await _productService.DownloadExcel();
+                if (stream != null)
                 {
-                    FileName = fileName
-                }.ToString());
-                Response.Headers.Add("Content-Length", stream.Length.ToString());
-                Response.ContentType = contentType;
-
-                // Return the file as FileStreamResult
-                return File(stream, contentType, fileName);
+                    var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    var fileName = "Products.xlsx";
+                    Response.Headers.Add("Content-Disposition", new ContentDispositionHeaderValue("attachment")
+                    {
+                        FileName = fileName
+                    }.ToString());
+                    Response.Headers.Add("Content-Length", stream.Length.ToString());
+                    Response.ContentType = contentType;
+                    return File(stream, contentType, fileName);
+                }
+                return NotFound();
             }
-            return NotFound();
+            catch (Exception ex)
+            {
+                CustomFileLogger.LogError("An error occurred while processing your request.", ex);
+                return StatusCode(500, "Internal server error");
+            }
 
         }
-
-
-
     }
 }

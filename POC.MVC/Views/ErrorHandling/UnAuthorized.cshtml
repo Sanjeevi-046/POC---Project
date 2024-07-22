@@ -1,0 +1,38 @@
+﻿@model object
+
+<p>Status Code: @ViewBag.StatusCode</p>
+<!DOCTYPE html>
+<html lang="en">
+
+
+	
+@if (ViewBag.StatusCode == "Unauthorized")
+		{
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			  content="width=device-width,
+				initial-scale=1.0">
+			<title>
+			401 Unauthorized
+		</title>
+	</head>
+	
+		<div class="error-container">
+			<h1> @ViewBag.StatusCode </h1>
+			<p>
+
+			</p>
+			
+		</div>
+	
+
+}
+<body>
+<button type="button" class="btn">
+	@Html.ActionLink("Go Back To Login", "LoginPage", "LoginController")
+</button>
+</body>
+
+
+</html>

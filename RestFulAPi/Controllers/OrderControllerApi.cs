@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Poc.CommonModel.Models;
 using POC.DataAccess.Service;
 using POC.DomainModel.Models;
 namespace POC.Api.Controllers
@@ -14,20 +15,49 @@ namespace POC.Api.Controllers
         {
             _orderService = orderService;
         }
-        [HttpPost("createOrder")]
-        public async Task<IActionResult> CreateOrder([FromBody] Order order, int orderedProduct)
-        {
-            if (order == null)
-            {
-                return BadRequest("Invalid order or quantity.");
-            }
-            var result = await _orderService.CreateOrderAsync(order, orderedProduct);
-            if (result.IsValid)
-            {
-                return Ok(result.Message);
-            }
 
-            return BadRequest(result.Message);
+        [HttpPost("Order")]
+        public async Task<IActionResult> CreateOrder( CommonOrderModel order, int orderedProduct)
+        {
+            try
+            {
+                if (order == null)
+                {
+                    return BadRequest("Invalid order or quantity.");
+                }
+                var result = await _orderService.CreateOrderAsync(order, orderedProduct);
+                if (result.IsValid)
+                {
+                    return Ok(result.Message);
+                }
+
+                return BadRequest(result.Message);
+            }
+            catch (Exception ex)
+            {
+                CustomFileLogger.LogError("An error occurred while processing Order request.", ex);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPost("Draft")]
+        public async Task<IActionResult> SaveAsDraft([FromBody] CommonTemporderTable order, int orderedProduct, string pincode)
+        {
+            try
+            {
+                var result = await _orderService.CreateOrderAsync (order, orderedProduct, pincode);
+                if (result.IsValid)
+                {
+                    return Ok(result.Message);
+                }
+                return BadRequest(result.Message);
+
+            }
+            catch (Exception ex) 
+            {
+                CustomFileLogger.LogError("An error occurred while processing Order request.", ex);
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

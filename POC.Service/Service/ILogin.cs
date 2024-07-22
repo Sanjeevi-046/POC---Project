@@ -1,22 +1,19 @@
-﻿using POC.DomainModel.Models;
-using POC.DomainModel.TempModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Poc.CommonModel.Models;
+using POC.DomainModel.Models;
 
 namespace POC.DataAccess.Service
+
 {
     public interface ILogin
     {
         Task<UserValidationResult> ValidateUserAsync(string name, string password);
-        Task<UserValidationResult> RegisterUserAsync(Login login, string rePassword);
-        Task<UserValidationResult> getUserId(string userId);
-        Task<Login> GetLoginAsync(string userId);
-        Task<Refreshtoken> GenerateRefreshToken(int userId);
-        Task InvalidateRefreshToken(string token);
-        Task<Refreshtoken> ValidateRefreshToken(string token);
+        Task<UserValidationResult> RegisterUserAsync(CommonLoginModel login, string rePassword);
+        Task<UserValidationResult> GetUserId(string userId);
+        Task<CommonLoginModel> GetLoginAsync(string userId);
+        Task<CommonRefereshToken> GenerateRefreshToken(int userId);
+        Task<UserValidationResult> InvalidateRefreshToken(string token);
+        Task<CommonRefereshToken> ValidateRefreshToken(string token);
         
     }
 }

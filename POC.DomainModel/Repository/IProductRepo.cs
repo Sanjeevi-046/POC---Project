@@ -1,7 +1,7 @@
 ﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
 
-namespace POC.DomainModel.Repository
+namespace POC.DataLayer.Repository
 {
     public interface IProductRepo
     {
@@ -10,5 +10,6 @@ namespace POC.DomainModel.Repository
         Task<CommonProductModel> GetProductById(int id);
         Task<UserValidationResult> AddProduct(CommonProductModel product);
         Task<MemoryStream> DownloadExcelFile();
+        Task<MemoryStream> DownloadHtmlReport();
     }
 }

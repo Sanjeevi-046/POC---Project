@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Test.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="bootstrap" Version="5.3.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -15,6 +20,18 @@
   <ItemGroup>
     <ProjectReference Include="..\Poc.CommonModel\POC.CommonModel.csproj" />
     <ProjectReference Include="..\RestFulAPi\POC.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Test.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Test.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Test.cshtml" />
   </ItemGroup>
 
 </Project>

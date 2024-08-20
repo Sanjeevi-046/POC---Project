@@ -1,4 +1,4 @@
-﻿namespace AutoMapper
+﻿namespace POC.AutoMapper
 {
     public class Class1
     {

@@ -1,15 +1,8 @@
-﻿using ClosedXML.Excel;
-using Microsoft.EntityFrameworkCore;
-using PagedList;
-using POC.DomainModel.Models;
-using POC.DomainModel.TempModel;
-using Microsoft.AspNetCore.Http;
-using System.Data;
-using Poc.CommonModel.Models;
-using POC.DomainModel.Repository;
+﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
+using POC.DataLayer.Repository;
 
-namespace POC.DataAccess.Service
+namespace POC.ServiceLayer.Service
 {
     public class ProductService : IProduct
     {
@@ -20,7 +13,7 @@ namespace POC.DataAccess.Service
             _productRepoService = productRepo;
         }
 
-        public async Task<CommonPaginationModel> GetAllProductsAsync(int page , string searchName)
+        public async Task<CommonPaginationModel> GetAllProductsAsync(int page, string searchName)
         {
             var ProductData = await _productRepoService.GetAllProducts(page, searchName);
             return ProductData;
@@ -34,11 +27,16 @@ namespace POC.DataAccess.Service
         {
             var ProductData = await _productRepoService.AddProduct(product);
             return ProductData;
-            
+
         }
         public async Task<MemoryStream> DownloadExcel()
         {
             var Files = await _productRepoService.DownloadExcelFile();
+            return Files;
+        }
+        public async Task<MemoryStream> DownloadHtml()
+        {
+            var Files = await _productRepoService.DownloadHtmlReport();
             return Files;
         }
     }

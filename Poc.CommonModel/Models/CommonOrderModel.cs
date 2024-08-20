@@ -1,7 +1,10 @@
-﻿namespace POC.CommonModel.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace POC.CommonModel.Models
 {
     public class CommonOrderModel
     {
+        [Key]
         public int OrderId { get; set; }
 
         public DateTime OrderDate { get; set; }

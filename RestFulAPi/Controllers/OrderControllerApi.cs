@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DataAccess.Service;
+using POC.ServiceLayer.Service;
 namespace POC.Api.Controllers
 {
-    [Route("Order")]
+    [Route("api/Order")]
     [ApiController]
     [Authorize(Policy = "AdminOrCustomer")]
     public class OrderControllerApi : ControllerBase

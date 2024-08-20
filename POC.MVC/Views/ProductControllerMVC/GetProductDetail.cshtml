@@ -1,5 +1,7 @@
 ﻿@model POC.MVC.Models.ProductModel
 
+<!DOCTYPE html>
+<html>
 <head>
     <link href="~/css/stylesheet.css" rel="stylesheet" />
     <link href="~/css/quantitybutton.css" rel="stylesheet" />
@@ -14,7 +16,8 @@
         <p>@Model.Description</p>
         <p><strong>Price:</strong> <span id="unit-price">@Model.Price.ToString("C")</span></p>
 
-        <form action="/OrderControllerMVC/AddOrder" method="post">
+         <form action="/OrderControllerMVC/AddOrder" method="post" >  
+        @* <form method="post" asp-page="/OrderController" asp-page-handler="AddOrder"> *@
             <p id="total-price-container" name="totalAmount" style="display: none;"><strong>Total Price:</strong> <span id="total-price"></span></p>
             <input type="hidden" name="productId" value="@Model.ProductId" />
             <input type="hidden" name="userId" value="@ViewBag.UserId" />
@@ -31,19 +34,18 @@
             }
             @if (Model.IsAvailable)
             {
-                <p><button type="submit"  class="common-style">Order Now</button></p>
+                <p><button type="submit" class="common-style">Order Now</button></p>
             }
             else
             {
                 <p style="animation-timing-function">Out of Service</p>
             }
             @* <div>
-                <p><button type="submit" formaction="/OrderControllerMVC/SaveAsDraft" method="post" class="common-style">Save as draft</button></p>
+            <p><button type="submit" formaction="/OrderControllerMVC/SaveAsDraft" method="post" class="common-style">Save as draft</button></p>
             </div> *@
         </form>
     </div>
     <div>
-        
     </div>
     <script>
         function changeQuantity(amount) {
@@ -78,3 +80,9 @@
     </script>
 
 </body>
+</html>
+
+
+
+
+

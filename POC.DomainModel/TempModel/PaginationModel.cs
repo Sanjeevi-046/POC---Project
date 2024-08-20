@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace POC.DomainModel.TempModel
+namespace POC.DataLayer.TempModel
 {
     public class PaginationModel
     {

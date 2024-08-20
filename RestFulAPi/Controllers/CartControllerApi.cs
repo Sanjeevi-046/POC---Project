@@ -1,16 +1,11 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using POC.DataAccess.Service;
-using POC.DomainModel.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using POC.CommonModel.Models;
+using POC.ServiceLayer.Service;
 
 namespace POC.Api.Controllers
 {
-    [Route("Cart")]
+    [Route("api/Cart")]
     [ApiController]
     
     public class CartControllerApi : ControllerBase

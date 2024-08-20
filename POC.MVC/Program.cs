@@ -1,17 +1,16 @@
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-
-using System.Text;
+using Microsoft.AspNetCore.Session;
+using POC.MVC.Middleware;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var BaseUrl = builder.Configuration.GetSection("BaseUrl");
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient("",_httpClient=> { _httpClient.BaseAddress = new Uri(BaseUrl["Url"]);
+});
 builder.Services.AddMvc().AddViewOptions(options =>
     options.HtmlHelperOptions.ClientValidationEnabled = true);
 builder.Services.AddControllers(options =>
@@ -25,6 +24,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddRazorPages();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,8 +39,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
+//app.UseMiddleware<TokenAuthenticationMiddleware>();
 app.UseRouting();
-
+app.MapRazorPages();
 app.UseAuthorization();
 
 app.MapControllerRoute(

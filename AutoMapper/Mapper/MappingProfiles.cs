@@ -2,7 +2,7 @@
 using POC.DomainModel.Models;
 using POC.CommonModel.Models;
 using Poc.CommonModel.Models;
-using POC.DomainModel.TempModel;
+using POC.DataLayer.TempModel;
 
 
 namespace POC.AutoMapper.Mapper

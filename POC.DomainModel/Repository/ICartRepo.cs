@@ -1,7 +1,7 @@
 ﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
 
-namespace POC.DomainModel.Repository
+namespace POC.DataLayer.Repository
 {
     public interface ICartRepo
     {

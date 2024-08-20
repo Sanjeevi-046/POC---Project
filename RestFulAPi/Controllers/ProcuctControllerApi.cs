@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DataAccess.Service;
-using POC.DomainModel.Models;
-using POC.DomainModel.TempModel;
-using System.Net;
+using POC.ServiceLayer.Service;
 using System.Net.Http.Headers;
 
 namespace POC.Api.Controllers
 {
-    [Route("Product")]
+    [Route("api/Product")]
     [ApiController]
     public class ProcuctControllerApi : ControllerBase
     {
@@ -39,7 +35,7 @@ namespace POC.Api.Controllers
 
         [Authorize(Policy = "AdminOrCustomer")]
         [HttpGet("Product")]
-        public async Task<ActionResult<Product>> GetProductById(int id)
+        public async Task<ActionResult<CommonProductModel>> GetProductById(int id)
         {
             try
             {
@@ -81,6 +77,10 @@ namespace POC.Api.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
 
         [Authorize(Policy = "AdminOrCustomer")]
         [HttpGet("ExportProductsToExcel")]
@@ -110,5 +110,33 @@ namespace POC.Api.Controllers
             }
 
         }
+        [Authorize(Policy = "AdminOrCustomer")]
+        [HttpGet("ExportProductsToHtml")]
+        public async Task<IActionResult> ExportProductsToHtml()
+        {
+            try
+            {
+                var stream = await _productService.DownloadHtml();
+                if (stream != null)
+                {
+                    var contentType = "text/html";
+                    var fileName = "Products.html";
+                    Response.Headers.Add("Content-Disposition", new ContentDispositionHeaderValue("attachment")
+                    {
+                        FileName = fileName
+                    }.ToString());
+                    Response.Headers.Add("Content-Length", stream.Length.ToString());
+                    Response.ContentType = contentType;
+                    return File(stream, contentType, fileName);
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                CustomFileLogger.LogError("An error occurred while processing your request.", ex);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
     }
 }

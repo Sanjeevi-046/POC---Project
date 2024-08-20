@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using POC.AutoMapper.Mapper;
-using POC.DataAccess.Service;
+using POC.DataLayer.Repository;
 using POC.DomainModel.Models;
-using POC.DomainModel.Repository;
+using POC.ServiceLayer.Service;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -96,10 +96,10 @@ builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IOrder, OrderService>();
 builder.Services.AddScoped<ICart, CartService>();
-builder.Services.AddScoped<ILoginRepo, LoginSerivceRepo>();
-builder.Services.AddScoped<IProductRepo, ProductServiceRepo>();
-builder.Services.AddScoped<IOrderRepo, OrderServiceRepo>();
-builder.Services.AddScoped<ICartRepo, CartServiceRepo>();
+builder.Services.AddScoped<ILoginRepo, LoginRepository>();
+builder.Services.AddScoped<IProductRepo, ProductRepository>();
+builder.Services.AddScoped<IOrderRepo, OrderRepository>();
+builder.Services.AddScoped<ICartRepo, CartRepository>();
 
 
 var app = builder.Build();

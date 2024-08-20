@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DataAccess.Service;
+using POC.ServiceLayer.Service;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace POC.Api.Controllers
 {
-    [Route("Login")]
+    [Route("api/Login")]
     [ApiController]
     [AllowAnonymous]
     public class LoginControllerApi : ControllerBase
@@ -23,11 +23,6 @@ namespace POC.Api.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok();
-        }
         [HttpGet("ID")]
         public async Task<IActionResult> GetId(string name)
         {
@@ -74,6 +69,7 @@ namespace POC.Api.Controllers
                 return BadRequest(result.Message);
             }
         }
+
         [HttpPost("Users")]
         public async Task<IActionResult> NewUser(UserRegistrationModel model)
         {
@@ -87,6 +83,7 @@ namespace POC.Api.Controllers
                 return NotFound(result.Message);
             }
         }
+
         [HttpPost("refreshToken")]
         public async Task<IActionResult> RefreshToken(string refreshToken)
         {

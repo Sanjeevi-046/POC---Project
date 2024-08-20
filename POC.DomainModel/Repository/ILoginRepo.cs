@@ -1,11 +1,11 @@
 ﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
 
-namespace POC.DomainModel.Repository
+namespace POC.DataLayer.Repository
 {
     public interface ILoginRepo
     {
-        Task<UserValidationResult> ValidateUserAsync(string name, string password);
+         Task<UserValidationResult> ValidateUserAsync(string name, string password);
         Task<UserValidationResult> RegisterUserAsync(CommonLoginModel login, string rePassword);
         Task<UserValidationResult> GetUserIdAsync(string userId);
         Task<CommonLoginModel> GetLoginUserAsync(string userId);

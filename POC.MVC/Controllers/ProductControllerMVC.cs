@@ -1,10 +1,8 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using POC.MVC.Models;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 
 namespace POC.MVC.Controllers
@@ -13,25 +11,23 @@ namespace POC.MVC.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly Uri baseAddress; 
-        private readonly HttpClient _httpClient;
-        public ProductControllerMVC(IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+        public ProductControllerMVC(IConfiguration configuration , IHttpClientFactory httpClientFactory)
         {
             _configuration = configuration;
-            _httpClient = new HttpClient ();
-            baseAddress = new Uri(_configuration["BaseUrl:Url"]); 
-            _httpClient.BaseAddress= baseAddress; 
+           _httpClientFactory = httpClientFactory;
         }
         private async Task<string> RefreshTokenAsync()
         {
             var refreshToken = HttpContext.Session.GetString("RefreshToken");
-
+            using var _httpClient = _httpClientFactory.CreateClient();
             if (string.IsNullOrEmpty(refreshToken))
             {
-                return null; 
+                return null;
             }
-            
-            var refreshContent = new StringContent( refreshToken ,Encoding.UTF8,"application/json");
-            
+
+            var refreshContent = new StringContent(refreshToken, Encoding.UTF8, "application/json");
+
             var refreshResponse = await _httpClient.PostAsync($"Login/refreshToken?refreshToken={refreshToken}", refreshContent);
             if (refreshResponse.IsSuccessStatusCode)
             {
@@ -52,6 +48,7 @@ namespace POC.MVC.Controllers
         }
         private async Task<HttpResponseMessage> SendAuthorizedRequestAsync(HttpMethod method, string requestUri, HttpContent content = null)
         {
+            using var _httpClient = _httpClientFactory.CreateClient();
             var token = HttpContext.Session.GetString("Token");
             if (string.IsNullOrEmpty(token))
             {
@@ -72,10 +69,11 @@ namespace POC.MVC.Controllers
                     {
                         Content = content
                     });
-                } 
+                }
             }
-            return response;   
+            return response;
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetProductList(int page = 1 , string searchName ="")
@@ -94,7 +92,7 @@ namespace POC.MVC.Controllers
             }
             //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             //HttpResponseMessage response = await _httpClient.GetAsync($"Products?page={page}&searchTerm={searchName}");
-            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Product/Products?page={page}&searchTerm={searchName}"); //page=1&searchName=I 
+            using var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Product/Products?page={page}&searchTerm={searchName}"); //page=1&searchName=I 
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
@@ -203,6 +201,32 @@ namespace POC.MVC.Controllers
 			}
 
 		}
+        [HttpGet]
+        public async Task<IActionResult> ExportProductsToHtml()
+        {
+            //HttpResponseMessage response = await _httpClient.GetAsync( "ExportProductsToExcel");
+            var response = await SendAuthorizedRequestAsync(HttpMethod.Get, "Product/ExportProductsToHtml");
+            if (response.IsSuccessStatusCode)
+            {
+                var stream = await response.Content.ReadAsStreamAsync();
+                var contentType = response.Content.Headers.ContentType.ToString();
+                var contentDisposition = response.Content.Headers.ContentDisposition;
+                if (contentDisposition != null)
+                {
+                    var filename = contentDisposition.FileName;
+                    return File(stream, contentType, filename);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
+            }
+
+        }
 
     }
 }

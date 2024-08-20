@@ -1,13 +1,12 @@
 ﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DomainModel.Repository;
+using POC.DataLayer.Repository;
 
-namespace POC.DataAccess.Service
+namespace POC.ServiceLayer.Service
 {
     public class LoginService : ILogin
     {
         private readonly ILoginRepo _loginRepoService;
-       
 
         public LoginService(ILoginRepo loginRepo)
         {
@@ -33,7 +32,6 @@ namespace POC.DataAccess.Service
 
         public async Task<UserValidationResult> RegisterUserAsync(CommonLoginModel login, string rePassword)
         {
-         
             var userData = await _loginRepoService.RegisterUserAsync(login, rePassword);
             return userData;
         }

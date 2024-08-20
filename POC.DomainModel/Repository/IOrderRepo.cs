@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace POC.DomainModel.Repository
+namespace POC.DataLayer.Repository
 {
     public interface IOrderRepo
     {
+        
         Task<UserValidationResult> CreateOrder(CommonOrderModel order, int orderedProduct);
         Task<UserValidationResult> CreateOrder(CommonTemporderTable order, int orderedProduct, string SaveAsaDraft);
     }

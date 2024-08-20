@@ -1,9 +1,10 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol.Plugins;
 using POC.MVC.Models;
-using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
@@ -88,11 +89,11 @@ namespace POC.MVC.Controllers
 
 
 
-        [HttpGet]
-        public IActionResult AddOrder()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult AddOrder()
+        //{
+        //    return View();
+        //}
 
         [HttpPost]
         public async Task<IActionResult> AddOrder(OrderModel order, int orderedProduct)
@@ -110,8 +111,11 @@ namespace POC.MVC.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     ViewBag.Message = await response.Content.ReadAsStringAsync();
+                    var Message = await response.Content.ReadAsStringAsync();
                     ViewBag.Error = null;
-                    return View();
+                    //return RedirectToAction("Test", "Views", new { Message = Message, UserName = userName });
+
+                    return RedirectToPage("/Test",new{Message=Message, UserName = userName });
                 }
                 else
                 {

@@ -1,9 +1,7 @@
-﻿
-using Poc.CommonModel.Models;
+﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DomainModel.Models;
 
-namespace POC.DataAccess.Service
+namespace POC.ServiceLayer.Service
 
 {
     public interface ILogin
@@ -15,6 +13,6 @@ namespace POC.DataAccess.Service
         Task<CommonRefereshToken> GenerateRefreshToken(int userId);
         Task<UserValidationResult> InvalidateRefreshToken(string token);
         Task<CommonRefereshToken> ValidateRefreshToken(string token);
-        
+
     }
 }

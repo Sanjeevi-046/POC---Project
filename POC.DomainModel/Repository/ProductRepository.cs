@@ -23,11 +23,12 @@ namespace POC.DataLayer.Repository
         public async Task<CommonPaginationModel> GetAllProducts(int page, string searchName)
         {
             int PageSize = 6;
-            var ProductData = await _context.Products.ToListAsync();
+            //EntityFramework sql 
+            var ProductData = await _context.Products.FromSqlRaw("EXEC GetProducts").ToListAsync();
 
             if (!string.IsNullOrEmpty(searchName))
             {
-                ProductData = await _context.Products.Where(x => x.Name.Contains(searchName)).ToListAsync();
+                ProductData = await _context.Products.FromSqlRaw("EXEC GetProductsByName {0}", searchName).ToListAsync();
             }
 
             var pageData = ProductData.ToPagedList(page, PageSize);
@@ -38,13 +39,14 @@ namespace POC.DataLayer.Repository
                 Total = count,
                 Product = pageData.ToList()
             };
-            return _mapper.Map<CommonPaginationModel>(pagination);
+            return _mapper.Map<CommonPaginationModel>(pagination); 
         }
 
         public async Task<CommonProductModel> GetProductById(int id)
         {
-            var ProductData = await _context.Products.FindAsync(id);
-            return _mapper.Map<CommonProductModel>(ProductData);
+            //var ProductData = await _context.Products.FindAsync(id);
+            var ProductData = await _context.Products.FromSqlInterpolated($"exec GetProductsById {id}").ToListAsync();
+            return _mapper.Map<CommonProductModel>(ProductData[0]);
         }
         public async Task<UserValidationResult> AddProduct(CommonProductModel product)
         {

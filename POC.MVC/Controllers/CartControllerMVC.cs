@@ -106,7 +106,10 @@ namespace POC.MVC.Controllers
             var response = await SendAuthorizedRequestAsync(HttpMethod.Post, "Cart/Carts", content);
             if (response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadAsStringAsync();
+
                 ViewBag.IsCartAdded = "True";
+                TempData["Message"] = data;
                 return RedirectToAction("GetProductList", "ProductControllerMVC");
             }
             ViewBag.IsCartAdded = "false";

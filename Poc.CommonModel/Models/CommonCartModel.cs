@@ -6,8 +6,8 @@ namespace POC.CommonModel.Models
     {
         [Key]
         public int CartId { get; set; }
-        public int? UserId { get; set; }
-        public int? ProductId { get; set; }
+        public int UserId { get; set; }
+        public int ProductId { get; set; }
 
     }
 }

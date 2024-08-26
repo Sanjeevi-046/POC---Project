@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using POC.MVC.Models;
@@ -92,21 +93,29 @@ namespace POC.MVC.Controllers
             }
             //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             //HttpResponseMessage response = await _httpClient.GetAsync($"Products?page={page}&searchTerm={searchName}");
-            using var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Product/Products?page={page}&searchTerm={searchName}"); //page=1&searchName=I 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var data = await response.Content.ReadAsStringAsync();
-                var JsonData = JObject.Parse(data);
-                ViewBag.TotalPages = JsonData["total"].ToString();
-                ViewBag.CurrentPage = JsonData["page"].ToString();
-                var productData = JsonData["product"].ToString();
-                var products = JsonConvert.DeserializeObject<IEnumerable<ProductModel>>(productData);
-                return View(products);
+                var response = await SendAuthorizedRequestAsync(HttpMethod.Get, $"Product/Products?page={page}&searchTerm={searchName}"); //page=1&searchName=I 
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var JsonData = JObject.Parse(data);
+                    ViewBag.TotalPages = JsonData["total"].ToString();
+                    ViewBag.CurrentPage = JsonData["page"].ToString();
+                    var productData = JsonData["product"].ToString();
+                    var products = JsonConvert.DeserializeObject<IEnumerable<ProductModel>>(productData);
+                    return View(products);
+                }
+                else
+                {
+                    return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
+                }
             }
-            else
+            catch (Exception ex) 
             {
-                return BadRequest();
+                return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = "404"});
             }
+
         }
 
         public async Task<IActionResult> GetProductDetail(int id)

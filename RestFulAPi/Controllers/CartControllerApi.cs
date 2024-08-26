@@ -40,7 +40,7 @@ namespace POC.Api.Controllers
                         }
                         else
                         {
-                            return StatusCode(500, "Error retrieving product details.");
+                            return StatusCode(500, "Not Found");
                         }
                     }
                 }

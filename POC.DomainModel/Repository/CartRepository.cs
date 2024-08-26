@@ -11,12 +11,15 @@ namespace POC.DataLayer.Repository
     public class CartRepository : ICartRepo
     {
         private readonly DemoProjectContext _context;
+        private readonly IProductRepo _productRepo;
         private readonly IMapper _mapper;
 
-        public CartRepository(DemoProjectContext context, IMapper mapper)
+        public CartRepository(DemoProjectContext context, IMapper mapper , IProductRepo productRepo)
         {
             _context = context;
             _mapper = mapper;
+            _productRepo = productRepo;
+
         }
         public async Task<List<CommonCartModel>> GetCartAsync(int id)
         {
@@ -32,10 +35,25 @@ namespace POC.DataLayer.Repository
             try
             {
                 var CartData = _mapper.Map<CartTable>(cartTable);
-                _context.CartTables.Add(CartData);
-                _context.SaveChanges();
-
-                return new UserValidationResult { IsValid = true, Message = "Product Added Successfully" };
+                var data = await _context.CartTables.FirstOrDefaultAsync(x => x.ProductId == CartData.ProductId);
+                if (data != null)
+                {
+                    var productData = await _productRepo.GetProductById(cartTable.ProductId);
+                    if (productData != null)
+                    {
+                        if (productData.IsAvailable && productData.ProductAvailable > 0)
+                        {
+                            _context.CartTables.Add(CartData);
+                            _context.SaveChanges();
+                            return new UserValidationResult { IsValid = true, Message = "Product Added To Cart" };
+                        }
+                        else
+                        {
+                            return new UserValidationResult { IsValid = false, Message = "Product Not Available!" };
+                        }
+                    }
+                }
+                return new UserValidationResult { IsValid = false, Message = "Product Added Available!" };
             }
             catch (Exception ex)
             {

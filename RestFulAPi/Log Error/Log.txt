@@ -11,3 +11,5 @@
 2024-08-01 11:25:23 [ERROR] An error occurred while processing your request. - Exception occured - System.Exception: Error
 2024-08-01 11:26:04 [ERROR] An error occurred while processing your request. - Exception occured - System.Exception: Error
 2024-08-01 11:27:11 [ERROR] An error occurred while processing your request. - Exception occured - System.Exception: Error
+2024-08-26 06:01:14 [ERROR] An error occurred while processing your request. - Exception occured - System.NullReferenceException: Object reference not set to an instance of an object.
+   at POC.Api.Controllers.CartControllerApi.GetCart(Int32 id) in C:\Users\sanjeevi.venkadachal\source\repos\POC\RestFulAPi\Controllers\CartControllerApi.cs:line 32

@@ -18,28 +18,42 @@
 </head>
 
 <body>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+    <div>
+        @if (ViewBag.Role == "Admin")
+        {
+            @* <a class="btn btn-primary" onclick="@Html.ActionLink("Add Product", "AddProductDetail", "ProductControllerMVC")"> </a> *@
+            <a class="btn btn-primary" href="/ProductControllerMVC/AddProductDetail">Add Product</a>
+
+        }
+    </div>
     <div class="position-relative" aria-live="polite" aria-atomic="true">
         <div class="toast-container top-0 end-0 p-3 " role="alert">
             <div class="toast-header" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay='{"show":0,"hide":}'>
                 <p>Hello, @ViewBag.UserName</p>
             </div>
+           
         </div>
     </div>
 
     <section style="background-color: #eee;">
+        
 
         <div class="container py-5">
             <div class="row">
                 <div class="row justify-content-between">
                     <div class="col">
-                        <form asp-action="GetProductList" method="get">
+                        <form asp-action="GetProductList" method="get" class="form-inline my-2 my-lg-0">
                             <div class="input-group mb-3">
-                                <input type="text" name="searchName" placeholder="Search products..." value="@ViewBag.searchName" />
+                                <input type="text"  name="searchName" placeholder="Search products" value="@ViewBag.searchName" />
                                 <button type="submit" class="btn btn-secondary btn-sm">Search</button>
                             </div>
                         </form>
-                    </div>
-                    <div class="col-5">
                         <div class="col">
                              @* <a asp-action="ExportProductsToExcel" class="btn btn-primary" style="float: inline-end">Download</a> *@
                             <a asp-action="ExportProductsToHtml" class="btn btn-primary" style="float: inline-end">Download</a>
@@ -50,6 +64,7 @@
                         </div>
                     </div>
                 </div>
+             
                 @foreach (var product in Model)
                 {
                     <div class="col-md-12 col-lg-4 mb-4 md-2 mb-lg-0">
@@ -72,7 +87,7 @@
                                         <form asp-controller="CartControllerMVC" asp-action="AddCart" method="post">
                                             <input type="hidden" name="UserId" value="@int.Parse(ViewBag.UserId)" />
                                             <input type="hidden" name="ProductId" value="@product.ProductId" />
-                                            <button type="button" class="btn btn-outline-secondary">Add To Cart</button>
+                                            <button type="submit" class="btn btn-outline-secondary">Add To Cart</button>
                                         </form>
 
                                     </div>
@@ -85,6 +100,7 @@
                         </div>
                     </div>
                 }
+                 
                 <div style="justify-content:center">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">

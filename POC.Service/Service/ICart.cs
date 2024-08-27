@@ -6,6 +6,7 @@ namespace POC.ServiceLayer.Service
     public interface ICart
     {
         Task<UserValidationResult> AddCart(CommonCartModel cartTable);
+
         Task<List<CommonCartModel>> GetCart(int id);
 
     }

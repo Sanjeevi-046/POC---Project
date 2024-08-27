@@ -35,8 +35,9 @@ namespace POC.DataLayer.Repository
             try
             {
                 var CartData = _mapper.Map<CartTable>(cartTable);
-                var data = await _context.CartTables.FirstOrDefaultAsync(x => x.ProductId == CartData.ProductId);
-                if (data != null)
+                var data = await _context.CartTables.FirstOrDefaultAsync(x => x.UserId == CartData.UserId && x.ProductId == CartData.ProductId);
+
+                if (data == null)
                 {
                     var productData = await _productRepo.GetProductById(cartTable.ProductId);
                     if (productData != null)
@@ -52,8 +53,25 @@ namespace POC.DataLayer.Repository
                             return new UserValidationResult { IsValid = false, Message = "Product Not Available!" };
                         }
                     }
+                    return new UserValidationResult { IsValid = false, Message = "Product Not Available!" };
                 }
-                return new UserValidationResult { IsValid = false, Message = "Product Added Available!" };
+                else
+                {
+                    var cartDetail = _context.CartTables.Find(data.CartId);
+                    if (cartDetail != null)
+                    {
+                        if(cartDetail.Quantity == null)
+                        {
+                            cartDetail.Quantity = 1;
+                        }
+                        cartDetail.Quantity = cartDetail.Quantity + 1;
+                        _context.CartTables.Update(cartDetail);
+                        _context.SaveChanges();
+                        return new UserValidationResult { IsValid = true, Message = "Product Added Available!" };
+                    }
+                    return new UserValidationResult { IsValid = false, Message = "Product Not Added!" };
+                }
+                
             }
             catch (Exception ex)
             {

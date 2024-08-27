@@ -41,6 +41,18 @@
       {
          "Name": "[dbo].[Users]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[GetProducts]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[GetProductsById]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[GetProductsByName]",
+         "ObjectType": 1
       }
    ],
    "UiHint": null,

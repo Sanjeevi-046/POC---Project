@@ -7,5 +7,6 @@
         public string? Mail { get; set; }
         public string? Role { get; set; }
         public int? userId { get; set; }
+        public int? Quantity { get; set; }
     }
 }

@@ -26,13 +26,13 @@ namespace POC.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult LoginPage()
+        public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginPage(Login login)
+        public async Task<IActionResult> Login(Login login)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace POC.MVC.Controllers
                         var userId = await userIdResponse.Content.ReadAsStringAsync();
                         HttpContext.Session.SetString("UserId", userId);
                         ViewBag.Error = null;
-                        return RedirectToAction("GetProductList", "ProductControllerMVC");
+                        return RedirectToAction("Products", "ProductControllerMVC");
                     }
                     else
                     {
@@ -80,13 +80,13 @@ namespace POC.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult NewUser()
+        public IActionResult User()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewUser(string RePassword, CommonLoginModel login)
+        public async Task<IActionResult> User(string RePassword, CommonLoginModel login)
         {
             var newUserModel = new UserRegistrationModel { rePassword = RePassword, Login = login };
             StringContent content = new StringContent(JsonConvert.SerializeObject(newUserModel), Encoding.UTF8, "application/json");

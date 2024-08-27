@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using POC.CommonModel.Models;
 using POC.ServiceLayer.Service;
+using Azure.Messaging;
 
 namespace POC.Api.Controllers
 {
@@ -27,24 +28,46 @@ namespace POC.Api.Controllers
             try
             {
                 var result = await _cartService.GetCart(id);
-                var productList = new List<CommonProductModel>();
-
-                foreach (var item in result)
+                var productList = new List<CommonProductQuantityModel>();
+                if (result!=null)
                 {
-                    if (item.ProductId.HasValue)
+                    foreach (var item in result)
                     {
-                        var productResponse = await _productService.GetProductByIdAsync(item.ProductId.Value);
-                        if (productResponse!=null)
-                        { 
-                            productList.Add(productResponse);                            
-                        }
-                        else
+                        if (item.ProductId != null)
                         {
-                            return StatusCode(500, "Not Found");
+                            var productResponse = await _productService.GetProductByIdAsync(item.ProductId);
+                            if (productResponse != null)
+                            {
+                                var quantityItem = 1;
+                                if (item.Quantity == 0 || item.Quantity == null)
+                                {
+                                    quantityItem = quantityItem;
+                                }
+                                else
+                                {
+                                    quantityItem = item.Quantity;
+                                }
+                                var productWithQuantity = new CommonProductQuantityModel
+                                {
+                                    ProductList = productResponse,
+                                    Quantity = quantityItem,
+                                    UserID = id
+
+                                };
+                                productList.Add(productWithQuantity);
+                            }
+                            else
+                            {
+                                return StatusCode(500, "Not Found");
+                            }
                         }
                     }
+                    return Ok(productList);
                 }
-                return Ok(productList);
+                else
+                {
+                    return Ok(productList=null);
+                }
             }
             catch (Exception ex)
             {

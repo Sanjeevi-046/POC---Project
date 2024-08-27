@@ -1,6 +1,7 @@
 ﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
 using POC.DataLayer.Repository;
+using System.Collections.Generic;
 
 namespace POC.ServiceLayer.Service
 {
@@ -16,6 +17,14 @@ namespace POC.ServiceLayer.Service
         public async Task<UserValidationResult> CreateOrderAsync(CommonOrderModel order, int orderedProduct)
         {
             var OrderData = await _orderRepoService.CreateOrder(order, orderedProduct);
+            return OrderData;
+
+        }
+
+        public async Task<UserValidationResult> CreateOrderAsync(List<CommonProductQuantityModel> commonProductQuantity)
+        {
+
+            var OrderData = await _orderRepoService.CreateOrder(commonProductQuantity);
             return OrderData;
 
         }

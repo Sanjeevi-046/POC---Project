@@ -24,6 +24,12 @@
             @TempData["Message"]
         </div>
     }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Error"]
+        </div>
+    }
     <div>
         @if (ViewBag.Role == "Admin")
         {
@@ -48,7 +54,7 @@
             <div class="row">
                 <div class="row justify-content-between">
                     <div class="col">
-                        <form asp-action="GetProductList" method="get" class="form-inline my-2 my-lg-0">
+                        <form asp-action="Products" method="get" class="form-inline my-2 my-lg-0">
                             <div class="input-group mb-3">
                                 <input type="text"  name="searchName" placeholder="Search products" value="@ViewBag.searchName" />
                                 <button type="submit" class="btn btn-secondary btn-sm">Search</button>
@@ -60,7 +66,7 @@
                             @* <button id="downloadBtn" class="btn btn-primary" style="float: inline-end">Download</button> *@
                         </div>
                         <div class="col">
-                            <a asp-action="GetCart" asp-controller="CartControllerMVC" class="btn btn-outline-primary" style="float: inline-end">Cart</a>
+                            <a asp-action="Cart" asp-controller="CartControllerMVC" class="btn btn-outline-primary" style="float: inline-end">Cart</a>
                         </div>
                     </div>
                 </div>
@@ -92,7 +98,7 @@
 
                                     </div>
                                     <div class="col-4">
-                                        <a asp-action="GetProductDetail" asp-controller="ProductControllerMVC" asp-route-id="@product.ProductId" class="btn btn-outline-primary">Order Now</a>
+                                        <a asp-action="Detail" asp-controller="ProductControllerMVC" asp-route-id="@product.ProductId" class="btn btn-outline-primary">Order Now</a>
 
                                     </div>
                                 </div>
@@ -107,19 +113,19 @@
                             @if (currentPage > 1)
                             {
                                 <li class="page-item">
-                                    @Html.ActionLink("« Previous", "GetProductList", new { page = currentPage - 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                                    @Html.ActionLink("« Previous", "Products", new { page = currentPage - 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
                                 </li>
                             }
                             @for (int i = 1; i <= totalPages; i++)
                             {
                                 <li class="page-item @(i == currentPage ? "active" : "")">
-                                    @Html.ActionLink(i.ToString(), "GetProductList", new { page = i, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                                    @Html.ActionLink(i.ToString(), "Products", new { page = i, searchName = @ViewBag.searchName }, new { @class = "page-link" })
                                 </li>
                             }
                             @if (currentPage < totalPages)
                             {
                                 <li class="page-item">
-                                    @Html.ActionLink("Next »", "GetProductList", new { page = currentPage + 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                                    @Html.ActionLink("Next »", "Products", new { page = currentPage + 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
                                 </li>
                             }
                         </ul>

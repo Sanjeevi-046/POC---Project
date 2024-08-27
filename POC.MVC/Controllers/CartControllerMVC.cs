@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using POC.CommonModel.Models;
 using POC.MVC.Models;
-using System.Configuration;
 using System.Net;
 using System.Text;
 
@@ -80,7 +80,7 @@ namespace POC.MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCart()
+        public async Task<IActionResult> Cart()
         {
             var userId = HttpContext.Session.GetString("UserId");
             //HttpResponseMessage response = await _httpClient.GetAsync(baseAddress + $"Cart?id={userId}");
@@ -88,12 +88,14 @@ namespace POC.MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
-                var products = JsonConvert.DeserializeObject<IEnumerable<ProductModel>>(data);
+                var products = JsonConvert.DeserializeObject<List<CommonProductQuantityModel>>(data);
                 return View(products);
             }
             else
             {
-                return BadRequest();
+                var message = response.Content.ReadAsStringAsync();
+                TempData["Error"] = message;
+                return RedirectToAction("Products", "ProductControllerMVC");
             }
             
         }
@@ -110,10 +112,10 @@ namespace POC.MVC.Controllers
 
                 ViewBag.IsCartAdded = "True";
                 TempData["Message"] = data;
-                return RedirectToAction("GetProductList", "ProductControllerMVC");
+                return RedirectToAction("Products", "ProductControllerMVC");
             }
             ViewBag.IsCartAdded = "false";
-            return RedirectToAction("GetProductList", "ProductControllerMVC");
+            return RedirectToAction("Products", "ProductControllerMVC");
         }
     }
 }

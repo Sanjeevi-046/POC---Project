@@ -38,7 +38,29 @@ namespace POC.Api.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [HttpPost("orderList")]
+        public async Task<IActionResult> CreateOrder([FromBody]List<CommonProductQuantityModel> commonProductQuantity)
+        {
+            try
+            {
+                if (commonProductQuantity == null)
+                {
+                    return BadRequest("Invalid order or quantity.");
+                }
+                var result = await _orderService.CreateOrderAsync(commonProductQuantity);
+                if (result.IsValid)
+                {
+                    return Ok(result.Message);
+                }
 
+                return BadRequest(result.Message);
+            }
+            catch (Exception ex)
+            {
+                CustomFileLogger.LogError("An error occurred while processing Order request.", ex);
+                return StatusCode(500, "Internal server error");
+            }
+        }
         [HttpPost("Draft")]
         public async Task<IActionResult> SaveAsDraft([FromBody] CommonTemporderTable order, int orderedProduct, string pincode)
         {

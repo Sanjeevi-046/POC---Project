@@ -4,6 +4,8 @@ using POC.ServiceLayer.Service;
 using POC.CommonModel.Models;
 using Poc.CommonModel.Models;
 using POC.Api.Controllers;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace POC.UnitTesting.ProductTesting
 {
@@ -12,11 +14,13 @@ namespace POC.UnitTesting.ProductTesting
     {
         private Mock<IProduct> _productServiceMock;
         private ProcuctControllerApi _productController;
+        private ILogger<ProcuctControllerApi> _loggerMock;
 
-        public ProductControllerTesting()
+        public ProductControllerTesting(ILogger<ProcuctControllerApi>logger)
         {
             _productServiceMock = new Mock<IProduct>();
-            _productController = new ProcuctControllerApi(_productServiceMock.Object);
+            _loggerMock = logger;
+            _productController = new ProcuctControllerApi(_productServiceMock.Object,_loggerMock);
         }
 
         [TestMethod]

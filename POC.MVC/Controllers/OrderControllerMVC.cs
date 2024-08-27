@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NuGet.Protocol.Plugins;
+using POC.CommonModel.Models;
 using POC.MVC.Models;
 using System.Net;
 using System.Text;
@@ -126,26 +124,48 @@ namespace POC.MVC.Controllers
             ViewBag.Message = null;
             return RedirectToAction("UnAuthorized", "ErrorHandling", "Model Invalid error");
         }
+        [HttpPost]
+        public async Task<IActionResult> AddOrderList(List<CommonProductQuantityModel> productQuantityModel)
+        {
+            
+                var userName = HttpContext.Session.GetString("UserName");
+                ViewBag.UserName = userName;
+                StringContent content = new StringContent(JsonConvert.SerializeObject(productQuantityModel), Encoding.UTF8, "application/json");
+                var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order/orderList", content);
 
-    [HttpPost]
-    public async Task<IActionResult> SaveAsDraft(OrderModel order, int orderedProduct, string pincode = "draft")
-    {
-        StringContent content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
-        //var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order?orderedProduct={orderedProduct}&pincode={pincode}", content); //Order?orderedProduct=3&pincode=sanj
-        var token = HttpContext.Session.GetString("Token");
-        _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-        HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"Order/Draft?orderedProduct={orderedProduct}&pincode={pincode}", content);
-        if (response.IsSuccessStatusCode)
-        {
-            ViewBag.Message = await response.Content.ReadAsStringAsync();
-            ViewBag.Error = null;
-            return View();
+                if (response.IsSuccessStatusCode)
+                {
+                    ViewBag.Message = await response.Content.ReadAsStringAsync();
+                    var Message = await response.Content.ReadAsStringAsync();
+                TempData["Message"] = await response.Content.ReadAsStringAsync();
+                ViewBag.Error = null;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
+                }
+            
         }
-        else
+        [HttpPost]
+        public async Task<IActionResult> SaveAsDraft(OrderModel order, int orderedProduct, string pincode = "draft")
         {
-            return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
+            StringContent content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
+            //var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order?orderedProduct={orderedProduct}&pincode={pincode}", content); //Order?orderedProduct=3&pincode=sanj
+            var token = HttpContext.Session.GetString("Token");
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"Order/Draft?orderedProduct={orderedProduct}&pincode={pincode}", content);
+            if (response.IsSuccessStatusCode)
+            {
+                ViewBag.Message = await response.Content.ReadAsStringAsync();
+                ViewBag.Error = null;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
+            }
         }
-    }
 
     }
 }

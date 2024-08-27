@@ -11,11 +11,15 @@ namespace POC.Api.Controllers
     public class ProcuctControllerApi : ControllerBase
     {
         private readonly IProduct _productService;
-        
-        public ProcuctControllerApi(IProduct productService )
+        private readonly ILogger<ProcuctControllerApi> _logger;
+        public ProcuctControllerApi(IProduct productService, ILogger<ProcuctControllerApi> logger)
         {
             _productService = productService;
+            _logger = logger;
+           
         }
+
+
 
         [Authorize(Policy = "AdminOrCustomer")]
         [HttpGet("Products")]
@@ -28,6 +32,7 @@ namespace POC.Api.Controllers
             }
             catch (Exception ex) 
             {
+                _logger.LogError(ex.ToString());
                 CustomFileLogger.LogError("An error occurred while processing your request.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -50,6 +55,7 @@ namespace POC.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 CustomFileLogger.LogError("An error occurred while processing your request.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -73,6 +79,7 @@ namespace POC.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 CustomFileLogger.LogError("An error occurred while processing your request.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -105,6 +112,7 @@ namespace POC.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 CustomFileLogger.LogError("An error occurred while processing your request.", ex);
                 return StatusCode(500, "Internal server error");
             }
@@ -133,6 +141,7 @@ namespace POC.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
                 CustomFileLogger.LogError("An error occurred while processing your request.", ex);
                 return StatusCode(500, "Internal server error");
             }

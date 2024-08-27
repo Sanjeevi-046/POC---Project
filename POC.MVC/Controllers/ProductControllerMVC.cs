@@ -75,9 +75,8 @@ namespace POC.MVC.Controllers
             return response;
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> GetProductList(int page = 1 , string searchName ="")
+        public async Task<IActionResult> Products(int page = 1 , string searchName ="")
         {
             var userId = HttpContext.Session.GetString("UserId");
             ViewBag.UserId = userId;
@@ -118,7 +117,7 @@ namespace POC.MVC.Controllers
 
         }
 
-        public async Task<IActionResult> GetProductDetail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
             var userId = HttpContext.Session.GetString("UserId");
             ViewBag.UserId = userId;
@@ -142,6 +141,7 @@ namespace POC.MVC.Controllers
         public IActionResult AddProductDetail() {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> AddProductDetail(ProductModel product , IFormFile productImage)
         {
@@ -177,7 +177,7 @@ namespace POC.MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             { 
-                return RedirectToAction("GetProductList");
+                return RedirectToAction("Products");
             }
             else
             {

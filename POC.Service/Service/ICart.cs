@@ -8,6 +8,6 @@ namespace POC.ServiceLayer.Service
         Task<UserValidationResult> AddCart(CommonCartModel cartTable);
 
         Task<List<CommonCartModel>> GetCart(int id);
-
+        Task<bool> DeleteItem(int ItemId);
     }
 }

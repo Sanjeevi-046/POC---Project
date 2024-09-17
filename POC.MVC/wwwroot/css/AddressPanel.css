@@ -1,0 +1,152 @@
+﻿body {
+    font-family: Arial, sans-serif;
+}
+
+.address-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: left; /* Align items to the left */
+}
+
+.address-box {
+    border-style: groove;
+    border-width: 2px;
+    border-color: #C7C7C7;
+    width: 330px;
+    height: 270px;
+    box-sizing: border-box;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+}
+
+.default-address {
+    border-color: #007bff; /* Highlight with a blue border */
+    background-color: #eaf4ff; /* Light blue background for default */
+}
+
+.default-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 0 0 5px 0;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.add-address-box {
+    border-style: dotted;
+    border-width: 2px;
+    border-color: #C7C7C7;
+    width: 320px;
+    height: 266px;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none; /* Remove underline */
+}
+
+.add-symbol {
+    font-size: 48px; /* Adjusted for visual balance */
+    color: #666;
+}
+
+.add-text {
+    font-size: 18px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.address-content {
+    text-align: left;
+    padding: 10px;
+}
+
+.address-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .address-list li {
+        margin-bottom: 8px;
+    }
+
+.address-name {
+    font-weight: bold;
+}
+
+.address-actions {
+    position: absolute;
+    bottom: 10px;
+    width: calc(100% - 40px); /* Ensure buttons are within bounds */
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    left: 20px;
+}
+
+.action-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+
+.address-select-container {
+    display: flex;
+    align-items: center; /* Aligns the select button with the address box */
+    gap: 15px; /* Adds space between the select button and the address box */
+    margin-bottom: 20px; /* Adds spacing between each address-select pair */
+}
+
+.select-address {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    padding-bottom: 200px;
+    /* Adjust the width to match your layout */
+}
+
+    .select-address label {
+        font-size: 40px;
+        color: #007bff;
+        cursor: pointer;
+    }
+
+
+.next-button {
+    display: flex;
+    margin-top: 20px;
+    margin-left: 50%;
+    padding: 8px 18px; /* Adjust padding for table buttons */
+    background-color: #007bff;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+}
+
+    .next-button :hover {
+        color: #0c68cb;
+    }
+

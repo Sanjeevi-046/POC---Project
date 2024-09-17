@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DomainModel.Models;
+using POC.DataLayer.Models;
 
 
 
@@ -14,7 +14,7 @@ namespace POC.DataLayer.Repository
         private readonly IProductRepo _productRepo;
         private readonly IMapper _mapper;
 
-        public CartRepository(DemoProjectContext context, IMapper mapper , IProductRepo productRepo)
+        public CartRepository(DemoProjectContext context, IMapper mapper, IProductRepo productRepo)
         {
             _context = context;
             _mapper = mapper;
@@ -60,24 +60,36 @@ namespace POC.DataLayer.Repository
                     var cartDetail = _context.CartTables.Find(data.CartId);
                     if (cartDetail != null)
                     {
-                        if(cartDetail.Quantity == null)
+                        if (cartDetail.Quantity == null)
                         {
                             cartDetail.Quantity = 1;
                         }
                         cartDetail.Quantity = cartDetail.Quantity + 1;
                         _context.CartTables.Update(cartDetail);
                         _context.SaveChanges();
-                        return new UserValidationResult { IsValid = true, Message = "Product Added Available!" };
+                        return new UserValidationResult { IsValid = true, Message = "Product Added to Cart" };
                     }
                     return new UserValidationResult { IsValid = false, Message = "Product Not Added!" };
                 }
-                
+
             }
             catch (Exception ex)
             {
                 return new UserValidationResult { IsValid = false, Message = ex.ToString() };
             }
 
+        }
+
+        public async Task<bool> DeleteCartAsync(int id)
+        {
+            var deleteItem = await _context.CartTables.FirstOrDefaultAsync(x=>x.ProductId==id);
+            if (deleteItem != null)
+            {
+                _context.CartTables.Remove(deleteItem);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -5,20 +5,20 @@ using POC.CommonModel.Models;
 using Poc.CommonModel.Models;
 using POC.Api.Controllers;
 
-namespace POC.Tests
+namespace POC.UnitTesting.OrderTesting
 {
     [TestClass]
     public class OrderControllerApiTests
     {
         private Mock<IOrder> _orderServiceMock;
-        private OrderControllerApi _orderController;
+        private OrderController _orderController;
 
         public OrderControllerApiTests()
         {
             _orderServiceMock = new Mock<IOrder>();
-            _orderController = new OrderControllerApi(_orderServiceMock.Object);
+            _orderController = new OrderController(_orderServiceMock.Object);
         }
-       
+
 
         [TestMethod]
         public async Task CreateOrder_ReturnsOkResult_WithSuccessMessage()
@@ -46,13 +46,13 @@ namespace POC.Tests
             Assert.AreEqual("Order created successfully", okResult.Value);
         }
 
-       
+
 
         [TestMethod]
         public async Task CreateOrder_ReturnsBadRequest_WithErrorMessage()
         {
             // Arrange
-            var order = new CommonOrderModel {  };
+            var order = new CommonOrderModel { };
             var orderedProduct = 5;
             var validationResult = new UserValidationResult { IsValid = false, Message = "Order creation failed" };
 
@@ -68,7 +68,7 @@ namespace POC.Tests
             Assert.AreEqual("Order creation failed", badRequestResult.Value);
         }
 
-        
+
 
         [TestMethod]
         public async Task SaveAsDraft_ReturnsOkResult_WithSuccessMessage()
@@ -76,7 +76,7 @@ namespace POC.Tests
             // Arrange
             var order = new CommonTemporderTable
             {
-               
+
                 OrderPrice = 10000,
                 ProductId = 30,
                 UserId = 1
@@ -101,7 +101,7 @@ namespace POC.Tests
         public async Task SaveAsDraft_ReturnsBadRequest_WithErrorMessage()
         {
             // Arrange
-            var order = new CommonTemporderTable {  };
+            var order = new CommonTemporderTable { };
             var orderedProduct = 5;
             var pincode = "123456";
             var validationResult = new UserValidationResult { IsValid = false, Message = "Saving draft failed" };
@@ -118,6 +118,6 @@ namespace POC.Tests
             Assert.AreEqual("Saving draft failed", badRequestResult.Value);
         }
 
-       
+
     }
 }

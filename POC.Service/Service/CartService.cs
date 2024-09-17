@@ -1,7 +1,7 @@
 ﻿using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
+using POC.DataLayer.Models;
 using POC.DataLayer.Repository;
-using POC.DomainModel.Models;
 
 namespace POC.ServiceLayer.Service
 {
@@ -22,6 +22,12 @@ namespace POC.ServiceLayer.Service
         public async Task<UserValidationResult> AddCart(CommonCartModel cartTable)
         {
             var CartData = await _cartRepoService.AddCartAsync(cartTable);
+            return CartData;
+
+        }
+        public async Task<bool> DeleteItem(int ItemId)
+        {
+            var CartData = await _cartRepoService.DeleteCartAsync(ItemId);
             return CartData;
 
         }

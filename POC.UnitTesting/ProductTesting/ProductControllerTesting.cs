@@ -13,14 +13,14 @@ namespace POC.UnitTesting.ProductTesting
     public class ProductControllerTesting
     {
         private Mock<IProduct> _productServiceMock;
-        private ProcuctControllerApi _productController;
-        private ILogger<ProcuctControllerApi> _loggerMock;
+        private ProcuctController _productController;
+        private ILogger<ProcuctController> _loggerMock;
 
-        public ProductControllerTesting(ILogger<ProcuctControllerApi>logger)
+        public ProductControllerTesting(ILogger<ProcuctController>logger)
         {
             _productServiceMock = new Mock<IProduct>();
             _loggerMock = logger;
-            _productController = new ProcuctControllerApi(_productServiceMock.Object,_loggerMock);
+            _productController = new ProcuctController(_productServiceMock.Object,_loggerMock);
         }
 
         [TestMethod]

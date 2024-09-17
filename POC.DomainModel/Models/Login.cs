@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace POC.DomainModel.Models;
+namespace POC.DataLayer.Models;
 
 public partial class Login
 {
@@ -26,4 +26,24 @@ public partial class Login
 
     [StringLength(50)]
     public string Role { get; set; }
+
+    [StringLength(100)]
+    public string Surname { get; set; }
+
+    [StringLength(10)]
+    [Unicode(false)]
+    public string MobileNumber { get; set; }
+
+    [StringLength(255)]
+    public string Address { get; set; }
+
+    [StringLength(6)]
+    [Unicode(false)]
+    public string Postcode { get; set; }
+
+    [StringLength(50)]
+    public string State { get; set; }
+
+    [StringLength(50)]
+    public string Country { get; set; }
 }

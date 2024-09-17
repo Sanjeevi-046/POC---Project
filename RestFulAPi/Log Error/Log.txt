@@ -21,3 +21,6 @@
    at POC.Api.Controllers.CartControllerApi.GetCart(Int32 id)
 2024-08-26 12:47:55 [ERROR] An error occurred while processing your request. - Exception occured - System.NullReferenceException: Object reference not set to an instance of an object.
    at POC.Api.Controllers.CartControllerApi.GetCart(Int32 id) in C:\Users\sanjeevi.venkadachal\source\repos\POC\RestFulAPi\Controllers\CartControllerApi.cs:line 32
+2024-09-17 12:15:04 [ERROR] An error occurred while processing your request. - Exception occured - System.MissingMethodException: Attempted to invoke a deleted method implementation. This can happen when a method is deleted or its name or signature is changed while the application is running.
+   at POC.CommonModel.Models.CommonProductQuantityModel.set_Quantity(Nullable`1 value)
+   at POC.Api.Controllers.CartController.GetCart(Int32 id) in C:\Users\sanjeevi.venkadachal\source\repos\POC\RestFulAPi\Controllers\CartController.cs:line 50

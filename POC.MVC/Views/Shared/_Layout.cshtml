@@ -1,47 +1,109 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var CartCount = TempData["productCount"];
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - POC.MVC</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/POC.MVC.styles.css" asp-append-version="true" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+    <title>@ViewData["Title"] Ekart</title>
+    <link href="~/css/stylesheet1.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" /> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+  
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">POC.MVC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            
-                            <a class="navbar-brand" asp-action="Products" asp-controller="ProductControllerMVC">Products</a>
-                        </li>
-                    </ul>
+   <header id="navbar-main">
+        <div class="navbar-container">
+            <!-- Left Section: Logo and Location -->
+            <div class="nav-left">
+                <!-- Logo -->
+                <div class="nav-logo">
+                    <a class="navbar-brand" asp-action="Products" asp-controller="Product">Ekart</a>
+                </div>
+                <!-- Location -->
+                <div class="nav-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="location-text">
+                        <span class="line-one">Deliver to</span>
+                        <span class="line-two">Chennai 600001</span>
+                    </div>
                 </div>
             </div>
-        </nav>
+            <!-- Center Section: Search Bar -->
+            <div class="nav-center">
+                <form asp-action="Products" asp-controller="Product" class="search-input-group"  method="GET">
+                    <select name="Category" id="search-category" class="search-category">
+                        <option value="all">All</option>
+                        <option value="Iphone">Iphone</option>
+                        <option value="Android">Android</option>
+                        <!-- Add more categories as needed -->
+                    </select>
+
+                    <input type="text" name="searchName" value="@ViewBag.searchName" id="search-input" placeholder="Search for products" class="search-input" />
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Section: Account and Cart -->
+            <div class="nav-right">
+                <!-- Account -->
+                <div class="account-dropdown">
+                    <a asp-action="Profile" asp-controller="User" class="account-link">
+                        <i class="fas fa-user"></i> <!-- User icon -->
+                        <span>Account</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="#">Your Orders</a>
+                        <a asp-action="Address" asp-controller="Address">Your Address</a>
+                        <a asp-action="LogOutUser" asp-controller="Logout">Sign Out</a>
+                    </div>
+                </div>
+                @* <div class="nav-account">
+                    <a asp-action="Profile" asp-controller="User">
+                        <i class="fas fa-user"></i>
+                        <span>Account</span>
+                    </a>
+                </div> *@
+                <!-- Cart -->
+                <div class="nav-cart">
+                    <a asp-action="Cart" asp-controller="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Cart</span>
+                        <span class="cart-count">@TempData["productCount"]</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </header>
+    <br />
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - POC.MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+    <br>
+    <!-- Footer -->
+    <footer>
+        <div>
+            <p>&copy; 2024 Ekart.</p>
+            <p>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </p>
         </div>
     </footer>
+
+    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

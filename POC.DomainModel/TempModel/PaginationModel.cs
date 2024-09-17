@@ -1,9 +1,4 @@
-﻿using POC.DomainModel.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using POC.DataLayer.Models;
 
 namespace POC.DataLayer.TempModel
 {

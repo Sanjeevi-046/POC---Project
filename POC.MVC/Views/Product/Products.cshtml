@@ -1,0 +1,164 @@
+﻿@model IEnumerable<POC.MVC.Models.ProductModel>
+@{
+    Layout = "_Layout";
+    int currentPage = int.Parse(ViewBag.CurrentPage) ?? 1;
+    int totalPages = int.Parse(ViewBag.TotalPages) ?? 1;
+}
+@if (TempData["Success"] != null)
+{
+    <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                @TempData["Success"]
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Error"]
+    </div>
+}
+<section style="background-color: white;">
+    <div class="container">
+        <div class="row">
+            @foreach (var product in Model)
+            {
+                <div class="col-md-12 col-lg-4 mb-4">
+                    <div class="card product-card">
+                        <img src="data:image;base64,@Convert.ToBase64String(product.ProductImage)"
+                             class="rounded mx-auto d-block" alt="img" style="height: 200px;width: 200px;" />
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <p class="small"><a class="text-muted">Mobiles</a></p>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5 class="mb-0 product-name">@product.Name</h5>
+                                <h5 class="text-dark mb-0 product-price">@product.Price.ToString("C")</h5>
+                            </div>
+
+                            <div class="row justify-content-between">
+                                <div class="col-5">
+                                    <form asp-controller="Cart" asp-action="AddCart" method="post">
+                                        <input type="hidden" name="UserId" value="@int.Parse(ViewBag.UserId)" />
+                                        <input type="hidden" name="ProductId" value="@product.ProductId" />
+                                        @if (ViewBag.Role == "Admin")
+                                        {
+                                            <button type="submit" class="btn btn-outline-secondary" hidden>Add To Cart</button>
+                                        }
+                                        else
+                                        {
+                                            @if (product.IsAvailable)
+                                            {
+                                                <button type="submit" class="btn btn-outline-secondary">Add To Cart</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-outline-secondary" disabled>Add To Cart</button>
+                                            }
+                                        }
+                                    </form>
+                                </div>
+                                <div class="col-4">
+                                    @if (ViewBag.Role == "Admin")
+                                    {
+                                        <a asp-action="Detail" asp-controller="Product" asp-route-id="@product.ProductId" class="btn btn-outline-primary" hidden>Order</a>
+                                    }
+                                    else
+                                    {
+                                        if (product.IsAvailable)
+                                        {
+                                            <a asp-action="Detail" asp-controller="Product" asp-route-id="@product.ProductId" class="btn btn-outline-primary">Order</a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Detail" asp-controller="Product" asp-route-id="@product.ProductId" class="btn btn-outline-primary disabled-link">Order</a>
+                                        }
+                                        
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="row justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    @if (currentPage > 1)
+                    {
+                        <li class="page-item">
+                            @Html.ActionLink("« Previous", "Products", new { page = currentPage - 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                        </li>
+                    }
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            @Html.ActionLink(i.ToString(), "Products", new { page = i, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                        </li>
+                    }
+                    @if (currentPage < totalPages)
+                    {
+                        <li class="page-item">
+                            @Html.ActionLink("Next »", "Products", new { page = currentPage + 1, searchName = @ViewBag.searchName }, new { @class = "page-link" })
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+
+ <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+            // Extract product data from HTML
+            const products = Array.from(document.querySelectorAll('.product-card')).map(card => {
+                return {
+                    Name: card.querySelector('.product-name').textContent,
+                    Price: card.querySelector('.product-price').textContent.replace('$', '')
+                };
+            });
+
+            // Create a new workbook and add a worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(products);
+
+            // Append the worksheet to the workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Products');
+
+            // Generate the Excel file and trigger download
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+            const blob = new Blob([stringToArray(wbout)], { type: 'application/octet-stream' });
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'products.xlsx';
+            link.click();
+        });
+
+        // Helper function to convert string to array buffer
+        function stringToArray(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) {
+                view[i] = s.charCodeAt(i) & 0xFF;
+            }
+            return buf;
+        }
+    });
+</script>

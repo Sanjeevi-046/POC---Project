@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 using POC.MVC.Models;
-using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace POC.MVC.Pages
 {

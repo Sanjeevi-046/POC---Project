@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using POC.DomainModel.Models;
+using POC.DataLayer.Models;
 using Poc.CommonModel.Models;
 using System.Security.Cryptography;
 using AutoMapper;
@@ -9,17 +9,17 @@ namespace POC.DataLayer.Repository
 {
     public class LoginRepository : ILoginRepo
     {
-        private readonly DemoProjectContext context;
+        private readonly DemoProjectContext _context;
         private readonly IMapper _mapper;
         public LoginRepository(DemoProjectContext context, IMapper mapper)
         {
-            this.context = context;
+            _context = context;
             _mapper = mapper;
         }
 
         public async Task<UserValidationResult> GetUserIdAsync(string userName)
         {
-            var userData = await context.Logins.FirstOrDefaultAsync(u => u.Name == userName);
+            var userData = await _context.Logins.FirstOrDefaultAsync(u => u.Name == userName);
             if (userData != null)
             {
                 return new UserValidationResult { IsValid = true, Message = userData.Id.ToString() };
@@ -28,7 +28,7 @@ namespace POC.DataLayer.Repository
         }
         public async Task<CommonLoginModel> GetLoginUserAsync(string userId)
         {
-            var userData = await context.Logins.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            var userData = await _context.Logins.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
             if (userData != null)
             {
                 return _mapper.Map<CommonLoginModel>(userData);
@@ -41,7 +41,7 @@ namespace POC.DataLayer.Repository
 
         public  async Task<UserValidationResult> ValidateUserAsync(string name, string password)
         {
-            var userData = await context.Logins.FirstOrDefaultAsync(c => c.Name == name);
+            var userData = await _context.Logins.FirstOrDefaultAsync(c => c.Name == name);
             if (userData == null)
             {
                 return new UserValidationResult { IsValid = false, Message = "The user name or password provided is incorrect." };
@@ -60,17 +60,18 @@ namespace POC.DataLayer.Repository
         {
             var userdetail = new User();
             var LoginData = _mapper.Map<Login>(login);
-            var userData = context.Logins.FirstOrDefault(u => u.Name == LoginData.Name);
+            var userData = await _context.Logins.FirstOrDefaultAsync(u => u.Name == LoginData.Name);
             LoginData.Role = "Customer";
             if (userData == null)
             {
                 if (rePassword == login.Password)
                 {
+                    _context.Logins.Add(LoginData);
                     userdetail.Email = LoginData.Email;
                     userdetail.Name = LoginData.Name;
-                    context.Users.Add(userdetail);
-                    context.Logins.Add(LoginData);
-                    await context.SaveChangesAsync();
+                    userdetail.UserId = login.Id;
+                    _context.Users.Add(userdetail);                   
+                    await _context.SaveChangesAsync();
                     var smtpClient = new SmtpClient("smtp.gmail.com", 587)
                     {
                         Credentials = new System.Net.NetworkCredential("sanjeevivenkatachalapathy@gmail.com", "daol sakx jqvg nrgg"), 
@@ -109,8 +110,8 @@ namespace POC.DataLayer.Repository
         }
         public async Task<CommonRefereshToken> GetRefreshTokenAsync(int userId)
         {
-            var TokenId = context.Refreshtokens.FirstOrDefaultAsync(u => u.Id == userId);
-            if (TokenId != null)
+            var TokenId = await _context.Refreshtokens.FirstOrDefaultAsync(u => u.Id == userId);
+            if (TokenId == null)
             {
                 var refreshToken = new Refreshtoken
                 {
@@ -118,8 +119,8 @@ namespace POC.DataLayer.Repository
                     ExpirationTime = DateTime.UtcNow.AddDays(1),
                     UserId = userId
                 };
-                context.Refreshtokens.Add(refreshToken);
-                await context.SaveChangesAsync();
+                _context.Refreshtokens.Add(refreshToken);
+                await _context.SaveChangesAsync();
 
                 return _mapper.Map<CommonRefereshToken>(refreshToken);
             }
@@ -130,18 +131,18 @@ namespace POC.DataLayer.Repository
         }
         public async Task<CommonRefereshToken> ValidateRefreshTokenAsync(string token)
         {
-            var refreshToken = await context.Refreshtokens
+            var refreshToken = await _context.Refreshtokens
                 .FirstOrDefaultAsync(t => t.RefreshToken1 == token && t.ExpirationTime > DateTime.UtcNow);
 
             return _mapper.Map<CommonRefereshToken>(refreshToken);
         }
         public async Task<UserValidationResult> InvalidateRefreshTokenAsync(string token)
         {
-            var refreshToken = await context.Refreshtokens.FirstOrDefaultAsync(t => t.RefreshToken1 == token);
+            var refreshToken = await _context.Refreshtokens.FirstOrDefaultAsync(t => t.RefreshToken1 == token);
             if (refreshToken != null)
             {
-                context.Refreshtokens.Remove(refreshToken);
-                await context.SaveChangesAsync();
+                _context.Refreshtokens.Remove(refreshToken);
+                await _context.SaveChangesAsync();
                 return new UserValidationResult { IsValid = true };
             }
             return new UserValidationResult { IsValid = false };

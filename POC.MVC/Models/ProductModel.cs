@@ -1,10 +1,8 @@
-﻿using POC.DomainModel.Models;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace POC.MVC.Models
 {
-   
+
     public class ProductModel
     {
         public int ProductId { get; set; }

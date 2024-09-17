@@ -1,0 +1,390 @@
+﻿@model List<POC.CommonModel.Models.AdminOrderDetails>
+@{
+    Layout = null;
+    int currentPage = Convert.ToInt32(ViewBag.CurrentPage) ?? 1;
+    int totalPages = Convert.ToInt32(ViewBag.TotalPages) ?? 1;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .Search-filter {
+            display: block;
+            padding-top: 10px;
+            margin-left: 65%;
+        }
+
+            .Search-filter input {
+                width: 250px;
+                padding: 7px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            .Search-filter .filter-button {
+                margin-left: auto;
+                padding: 9px 30px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+        .filter-box {
+            width: 90%;
+            background-color: #f4f4f4;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-row {
+            display: contents;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 15px;
+            margin-bottom: 10px;
+        }
+
+            .filter-row label {
+                width: 150px;
+                font-weight: bold;
+                margin-right: 10px;
+                margin-left: 15px;
+            }
+
+            .filter-row select,
+            .filter-row input {
+                width: 240px;
+                padding: 7px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            .filter-row .filter-button {
+                padding: 9px 30px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+        .filter-button:hover {
+            background-color: #0056b3;
+        }
+
+        .filter-row.search-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-right: 60px;
+        }
+
+        .search-row input {
+            margin-right: 10px;
+            width: 200px;
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .table-button {
+            padding: 6px 18px; /* Adjust padding for table buttons */
+            background-color: #007bff; 
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
+        }
+
+            .table-button:hover {
+                background-color: #0056b3; /* Darker green on hover */
+            }
+
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th a {
+            color: inherit; /* Inherit the color from the table header */
+            text-decoration: none; /* Remove the underline */
+            font-weight: bold; /* You can add this to emphasize the text */
+        }
+
+            th a:hover {
+                color: #007bff; /* Optional: Change color on hover */
+            }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .order-row:hover {
+            cursor: pointer;
+            background-color: #f1f1f1;
+        }
+
+        .toggle-button {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .child-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+            .child-table th,
+            .child-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            .child-table th {
+                background-color: #f4f4f4;
+            }
+
+        .child-row {
+            display: none;
+        }
+
+            .child-row.active {
+                display: table-row;
+            }
+
+        .pagination-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination {
+            list-style-type: none;
+            padding: 0;
+            display: inline-block;
+        }
+
+            .pagination .page-item {
+                display: inline;
+                margin: 0 5px;
+            }
+
+        .page-link {
+            text-decoration: none;
+            padding: 10px 15px;
+            background-color: #f4f4f4;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+            .page-link:hover {
+                background-color: #ddd;
+            }
+
+        .page-item.active .page-link {
+            background-color: #333;
+            color: white;
+            border-color: #333;
+
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script>
+        function toggleChildRow(orderId) {
+            var childRow = document.querySelector(`.child-row[data-id="${orderId}"]`);
+            var button = document.querySelector(`.order-row[data-id="${orderId}"] .toggle-button`);
+            if (childRow.classList.contains('active')) {
+                childRow.classList.remove('active');
+                button.classList.remove('bi-caret-down-fill');
+                button.classList.add('bi-caret-right-fill');
+            } else {
+                childRow.classList.add('active');
+                button.classList.remove('bi-caret-right-fill');
+                button.classList.add('bi-caret-down-fill');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Filter Box -->
+        <div class="filter-box">
+            <form asp-action="Index" method="get">
+                <div class="filter-row">
+                    <label for="orderStatus">Order Status:</label>
+                    <select id="orderStatus" name="Status">
+                        <option selected>Select Status</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                </div>
+                <div class="filter-row">
+                    <label for="min">From date:</label>
+                    <input type="date" id="min" name="fromDate">
+                </div>
+                <div class="filter-row">
+                    <label for="max">To date:</label>
+                    <input type="date" id="max" name="toDate">
+                </div>
+                <div class="filter-row">
+                    <button type="submit" class="filter-button">Filter</button>
+                </div>
+
+                <!-- Search Row - Positioned at the end -->
+                <div class="filter-row search-row" style="padding-left: 100px;">
+                    <input type="text" name="searchName" placeholder="Search " value="@ViewBag.searchName">
+                    <button type="submit" class="filter-button">Search</button>
+                </div>
+                
+            </form>
+        </div>
+        <br>
+        <form asp-action="Download" asp-controller="Admin" method="get">
+            <div class="filter-row search-row" style="display:">
+               
+                <button type="submit" class="filter-button">Dowload</button>
+            </div>
+     </form>
+        <!-- Orders Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortColumnName="OrderId"
+                           asp-route-sortOrder="@(ViewBag.CurrentSortColumn == "OrderId" && ViewBag.CurrentSortOrder == "asc" ? "desc" : "asc")">
+                            Order ID
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortColumnName="UserName"
+                           asp-route-sortOrder="@(ViewBag.CurrentSortColumn == "UserName" && ViewBag.CurrentSortOrder == "asc" ? "desc" : "asc")">
+                            User Name
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortColumnName="Status"
+                           asp-route-sortOrder="@(ViewBag.CurrentSortColumn == "Status" && ViewBag.CurrentSortOrder == "asc" ? "desc" : "asc")">
+                            Status
+                        </a>
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortColumnName="Date"
+                           asp-route-sortOrder="@(ViewBag.CurrentSortColumn == "Date" && ViewBag.CurrentSortOrder == "asc" ? "desc" : "asc")">
+                            Date
+                        </a>
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr class="order-row" data-id="@order.OrderId" onclick="toggleChildRow(@order.OrderId)">
+                        <td><i class="toggle-button bi bi-caret-right-fill"></i></td>
+                        <td>@order.OrderId</td>
+                        <td>@order.UserName</td>
+                        <td>@(order.IsDelivered ? "Delivered" : "Cancelled")</td>
+                        <td> @(order.ProductPrice * order.ProductQuantity + (order.ProductPrice * order.ProductQuantity * 5 / 100))</td>     <!-- Empty Cell for Price -->
+                        <td>@order.OrderDate.ToString("yyyy-MM-dd hh:mm tt")</td>
+                        @if(order.IsDelivered){
+                            <td>
+                                <a asp-action="Invoice" asp-controller="Admin" asp-route-Id="@order.OrderId" class="filter-button table-button">Invoice</a>
+                            </td>
+
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                    <tr class="child-row" data-id="@order.OrderId">
+                        <td colspan="7">
+                            <table class="child-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Total Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>@order.ProductName</td>
+                                        <td>@order.ProductQuantity</td>
+                                        <td>@(order.ProductPrice * order.ProductQuantity)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-container">
+        <ul class="pagination">
+            @if (currentPage > 1)
+            {
+                <li class="page-item">
+                    @Html.ActionLink("« Previous", "Index", new { page = currentPage - 1 , sortColumnName = @ViewBag.CurrentSortColumn, sortOrder = @ViewBag.CurrentSortOrder, searchName = @ViewBag.searchName, Status = @ViewBag.Status, fromDate = @ViewBag.fromDate, toDate = @ViewBag.toDate }, new { @class = "page-link" })
+                </li>
+            }
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+
+                    @Html.ActionLink(i.ToString(), "Index", new { page = i, sortColumnName = @ViewBag.CurrentSortColumn, sortOrder = @ViewBag.CurrentSortOrder, searchName = @ViewBag.searchName, Status = @ViewBag.Status, fromDate = @ViewBag.fromDate, toDate = @ViewBag.toDate }, new { @class = "page-link" })
+                </li>
+            }
+            @if (currentPage < totalPages)
+            {
+                <li class="page-item">
+                    @Html.ActionLink("Next »", "Index", new { page = currentPage + 1, sortColumnName = @ViewBag.CurrentSortColumn, sortOrder = @ViewBag.CurrentSortOrder, searchName = @ViewBag.searchName, Status = @ViewBag.Status, fromDate = @ViewBag.fromDate, toDate = @ViewBag.toDate }, new { @class = "page-link" })
+                </li>
+            }
+        </ul>
+    </div>
+</body>
+</html>

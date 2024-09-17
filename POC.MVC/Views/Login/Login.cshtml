@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Login Page";
+    Layout = null;
 }
 
 @if (ViewBag.Error != null)
@@ -61,7 +62,7 @@
                             <div class="col-12">
                                 <hr class="mt-5 mb-4 border-secondary-subtle">
                                 <div class="text-end">
-                                    <a asp-controller="Login" asp-action="NewUser" class="link-secondary text-decoration-none">Register Now</a>
+                                    <a asp-controller="Login" asp-action="User" class="link-secondary text-decoration-none">Register Now</a>
                                 </div>
                             </div>
                         </div>

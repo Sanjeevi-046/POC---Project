@@ -1,0 +1,88 @@
+﻿@model POC.MVC.Models.ProductModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="~/css/stylesheet.css" rel="stylesheet" />
+    <link href="~/css/quantitybutton.css" rel="stylesheet" />
+</head>
+
+<body>
+    <h2 style="text-align:center">Product</h2>
+
+    <div class="card">
+        <img src="data:image;base64,@Convert.ToBase64String(Model.ProductImage)" alt="@Model.Name">
+        <h4>@Model.Name</h4>
+        <p>@Model.Description</p>
+        <p><strong>Price:</strong> <span id="unit-price">@Model.Price.ToString("C")</span></p>
+
+         <form action="/Order/AddOrder" method="post" >  
+        @* <form method="post" asp-page="/OrderController" asp-page-handler="AddOrder"> *@
+            <p id="total-price-container" name="totalAmount" style="display: none;"><strong>Total Price:</strong> <span id="total-price"></span></p>
+            <input type="hidden" name="productId" value="@Model.ProductId" />
+            <input type="hidden" name="userId" value="@ViewBag.UserId" />
+            <input type="hidden" name="OrderPrice" id="order-price" value="@Model.Price" />
+            @* <input type="hidden" name="OrderDate" id="orderDate" value="@DateTime.UtcNow" /> *@
+            <input type="hidden" name="orderedProduct" id="ordered-product" value="1" />
+            @if (Model.IsAvailable && Model.IsQuantityAvailable)
+            {
+                <div class="quantity" style="text-align:center">
+                    <button type="button" class="minus" aria-label="Decrease" onclick="changeQuantity(-1)">−</button>
+                    <input type="number" class="input-box" name="quantity" value="1" min="1" max="@Model.ProductAvailable" readonly>
+                    <button type="button" class="plus" aria-label="Increase" onclick="changeQuantity(1)">+</button>
+                </div>
+            }
+            @if (Model.IsAvailable)
+            {
+                <p><button type="submit" class="common-style">Order Now</button></p>
+            }
+            else
+            {
+                <p style="animation-timing-function">Out of Service</p>
+            }
+            @* <div>
+            <p><button type="submit" formaction="/OrderControllerMVC/SaveAsDraft" method="post" class="common-style">Save as draft</button></p>
+            </div> *@
+        </form>
+    </div>
+    <div>
+    </div>
+    <script>
+        function changeQuantity(amount) {
+            const inputBox = document.querySelector('.quantity .input-box');
+            const orderPriceElement = document.getElementById('order-price');
+            const totalPriceContainer = document.getElementById('total-price-container');
+            const totalPriceElement = document.getElementById('total-price');
+            const orderedProductElement = document.getElementById('ordered-product');
+            const unitPrice = @Model.Price; // Use the actual price from the model
+            let currentValue = parseInt(inputBox.value);
+            const minValue = parseInt(inputBox.min);
+            const maxValue = parseInt(inputBox.max);
+            let newValue = currentValue + amount;
+            if (newValue < minValue) {
+                newValue = minValue;
+            }
+            if (newValue > maxValue) {
+                newValue = maxValue;
+            }
+            inputBox.value = newValue;
+            orderedProductElement.value = newValue; // Update the hidden input field
+
+            let newTotalPrice = newValue * unitPrice;
+            totalPriceElement.textContent = newTotalPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+            orderPriceElement.value = newTotalPrice.toFixed(2);
+            totalPriceContainer.style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            console.log('DOM fully loaded and parsed');
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+

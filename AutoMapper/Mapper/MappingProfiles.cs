@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using POC.DomainModel.Models;
 using POC.CommonModel.Models;
 using Poc.CommonModel.Models;
 using POC.DataLayer.TempModel;
+using POC.DataLayer.Models;
 
 
 namespace POC.AutoMapper.Mapper
@@ -17,7 +17,10 @@ namespace POC.AutoMapper.Mapper
             CreateMap<CartTable, CommonCartModel>().ReverseMap();
             CreateMap<Refreshtoken, CommonRefereshToken>().ReverseMap();
             CreateMap<PaginationModel, CommonPaginationModel>().ReverseMap();
-
+            CreateMap<Login,CommonUserModel>().ReverseMap();
+            CreateMap<CommonLoginModel, CommonUserModel>().ReverseMap();
+            CreateMap<CommonAddressModel,AddressDetail>().ReverseMap();
+            CreateMap<CommonPaymentModel,Payment>().ReverseMap();
         }
     }
 }

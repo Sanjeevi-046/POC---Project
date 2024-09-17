@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Session;
+using POC.MVC.Authorization;
 using POC.MVC.Middleware;
 using System.Configuration;
 
@@ -9,8 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 var BaseUrl = builder.Configuration.GetSection("BaseUrl");
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpClient("",_httpClient=> { _httpClient.BaseAddress = new Uri(BaseUrl["Url"]);
+builder.Services.AddHttpClient("",_httpClient=> {
+    _httpClient.BaseAddress = new Uri(BaseUrl["Url"]);
 });
+builder.Services.AddScoped<AuthorizedRequest>();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddMvc().AddViewOptions(options =>
     options.HtmlHelperOptions.ClientValidationEnabled = true);
 builder.Services.AddControllers(options =>

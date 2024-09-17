@@ -1,0 +1,65 @@
+﻿@model POC.CommonModel.Models.CommonPaymentModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/Creditcard.css">
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate.unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+</head>
+<body>
+    <form asp-action="DoPayment" asp-controller="Payment" method="post" class="credit-card">
+        <div class="form-header">
+            <h4 class="title">Credit Card Detail</h4>
+        </div>
+        <div class="form-body">
+            <input type="hidden" asp-for="Id" value="@TempData["PaymentID"]" />
+
+            <!-- Card Number -->
+            <div class="form-group">
+                <input type="text" asp-for="CardNumber" class="card-number" placeholder="Card Number" />
+                <span asp-validation-for="CardNumber" class="text-danger"></span>
+            </div>
+
+            <!-- Date Field -->
+            <div class="form-group date-field">
+                <div class="month">
+                    <select asp-for="ExpiryMonth" class="form-control">
+                        <option value="">Month</option>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ExpiryMonth" class="text-danger"></span>
+                </div>
+                <div class="year">
+                    <input type="text" asp-for="ExpiryYear" class="form-control" placeholder="Year" />
+                    <span asp-validation-for="ExpiryYear" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Card Verification Field -->
+            <div class="form-group card-verification">
+                <input type="text" asp-for="Cvv" class="form-control" placeholder="CVV" />
+                <span asp-validation-for="Cvv" class="text-danger"></span>
+            </div>
+
+            <!-- Buttons -->
+            <button type="submit" class="proceed-btn">Proceed</button>
+        </div>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            $("form").validate();
+        });
+    </script>
+</body>
+</html>

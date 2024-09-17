@@ -12,12 +12,12 @@ namespace POC.UnitTesting.LoginTesting
     public class LoginControllerTesting
     {
         private Mock<ILogin> _loginServiceMock;
-        private LoginControllerApi _loginController;
+        private LoginController _loginController;
         private readonly IConfiguration _configuration;
         public LoginControllerTesting()
         {
             _loginServiceMock = new Mock<ILogin>();
-            _loginController = new LoginControllerApi(_loginServiceMock.Object,_configuration);
+            _loginController = new LoginController(_loginServiceMock.Object,_configuration);
             
 
         }

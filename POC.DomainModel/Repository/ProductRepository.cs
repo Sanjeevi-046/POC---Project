@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using PagedList;
 using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
+using POC.DataLayer.Models;
 using POC.DataLayer.TempModel;
-using POC.DomainModel.Models;
 using System.Data;
 using System.Text;
 

@@ -7,6 +7,7 @@ namespace POC.DataLayer.Repository
     {
         Task<List<CommonCartModel>> GetCartAsync(int id);
         Task<UserValidationResult> AddCartAsync(CommonCartModel cartTable);
+        Task<bool> DeleteCartAsync(int id);
 
     }
 }

@@ -8,21 +8,21 @@ using Poc.CommonModel.Models;
 using POC.Api.Controllers;
 using System.Collections.Generic;
 
-namespace POC.Tests
+namespace POC.UnitTesting.CartTesting
 {
     [TestClass]
     public class CartControllerApiTesting
     {
         private Mock<ICart> _cartServiceMock;
         private Mock<IProduct> _productServiceMock;
-        private CartControllerApi _cartController;
+        private CartController _cartController;
         public CartControllerApiTesting()
         {
             _cartServiceMock = new Mock<ICart>();
             _productServiceMock = new Mock<IProduct>();
-            _cartController = new CartControllerApi(_cartServiceMock.Object, _productServiceMock.Object);
+            _cartController = new CartController(_cartServiceMock.Object, _productServiceMock.Object);
         }
-       
+
 
         [TestMethod]
         public async Task GetCart_ReturnsOkResult_WithProductList()
@@ -79,7 +79,7 @@ namespace POC.Tests
             Assert.AreEqual(500, statusCodeResult.StatusCode);
         }
 
-       
+
         [TestMethod]
         public async Task AddCart_ReturnsCreatedAtActionResult_WithSuccessMessage()
         {
@@ -118,6 +118,6 @@ namespace POC.Tests
             Assert.AreEqual("Error adding to cart", badRequestResult.Value);
         }
 
-        
+
     }
 }

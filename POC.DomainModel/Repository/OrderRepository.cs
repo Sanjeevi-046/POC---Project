@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DomainModel.Models;
+using POC.DataLayer.Models;
 namespace POC.DataLayer.Repository
 {
     public class OrderRepository : IOrderRepo
@@ -19,34 +19,47 @@ namespace POC.DataLayer.Repository
             try
             {
                 var cartItems = await _context.CartTables.Where(x => x.UserId == cartOrder[0].UserID).ToListAsync();
-                var orderList = new List<Order>();
+                var defaultAddress = await (from address in _context.AddressDetails
+                                            where address.UserId == cartOrder[0].UserID && address.IsDefault == true
+                                            select address).FirstOrDefaultAsync();
 
-                foreach (var item in cartOrder)
+                var newOrder = new Order();
+                var TotalAmount = 0;
+               
+                newOrder.ProductList = "";
+                newOrder.ProductQuantityList = "";
+                foreach (var order in cartOrder) 
                 {
-                    var orderModel = new Order
-                    {
-                        OrderDate = DateTime.Now,
-                        OrderPrice = item.Quantity * item.ProductList.Price,
-                        UserId = item.UserID
-                    };
-                    _context.Orders.Add(orderModel);
-                    var product = await _context.Products.FindAsync(item.ProductList.ProductId);
-                    if (product != null)
-                    {
-                        product.ProductAvailable -= item.Quantity;
-                        if (product.ProductAvailable <= 0)
-                        {
-                            product.IsAvailable = false;
-                        }
-                    }
+                    var orderPrice = order.Quantity * order.ProductList.Price;
+                    TotalAmount += (int)orderPrice;
+                    newOrder.ProductList += order.ProductList.ProductId + ",";
+                    newOrder.ProductQuantityList += order.Quantity + ",";
+
                 }
-
+                newOrder.UserId = cartOrder[0].UserID;
+                newOrder.ProductList = newOrder.ProductList.TrimEnd(',');
+                newOrder.ProductQuantityList = newOrder.ProductQuantityList.TrimEnd(',');
+                newOrder.OrderDate = DateTime.Now;
+                newOrder.OrderPrice = TotalAmount;
+                newOrder.AddressId = defaultAddress.Id;
+                await _context.Orders.AddAsync(newOrder);   
                 await _context.SaveChangesAsync();
 
-                _context.CartTables.RemoveRange(cartItems);
+                var payment = new Payment
+                {
+                    CardNumber = "",
+                    Cvv = 000,
+                    ExpiryMonth = 0,
+                    ExpiryYear = 0,
+                    PaymentReceived = false,
+                    OrderId =newOrder.OrderId,
+                    Amount = TotalAmount,
+                    UserId = cartOrder[0].UserID,
+                };
+                _context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
 
-                return new UserValidationResult{IsValid = true, Message = "Order has been placed successfully!"};
+                return new UserValidationResult{IsValid = true, PaymentId = payment.Id};
             }
             catch (Exception ex) {
                 return new UserValidationResult { IsValid = false, Message = ex.Message };
@@ -70,7 +83,22 @@ namespace POC.DataLayer.Repository
                     }
                 }
                 await _context.SaveChangesAsync();
-                return new UserValidationResult { IsValid = true, Message = $"Your {product.Name} Order Has been Placed SuccessFully." };
+
+                var payment = new Payment
+                {
+                    CardNumber = "",
+                    Cvv = 000,
+                    ExpiryMonth = 0,
+                    ExpiryYear = 0,
+                    PaymentReceived = false,
+                    OrderId = orderData.OrderId,
+                    Amount = orderData.OrderPrice * orderedProduct,
+                    UserId = orderData.UserId,
+                };
+                _context.Payments.Add(payment);
+                await _context.SaveChangesAsync();
+
+                return new UserValidationResult { IsValid = true, PaymentId = payment.Id };
             }
             catch (Exception ex)
             {

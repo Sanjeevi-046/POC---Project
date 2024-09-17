@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace POC.DomainModel.Models;
+namespace POC.DataLayer.Models;
 
 [Table("CartTable")]
 public partial class CartTable

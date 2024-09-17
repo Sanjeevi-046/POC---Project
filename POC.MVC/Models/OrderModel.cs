@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using POC.DomainModel.Models;
-
-namespace POC.MVC.Models
+﻿namespace POC.MVC.Models
 {
     public class OrderModel
     {
@@ -17,8 +13,6 @@ namespace POC.MVC.Models
         public int? Id { get; set; }
 
         public decimal OrderPrice { get; set; }
-
-       
 
 
 

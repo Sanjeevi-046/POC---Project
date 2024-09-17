@@ -1,11 +1,9 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
-using POC.DomainModel.Models;
-using System.Configuration;
+using POC.MVC.Models;
 using System.Text;
 
 namespace POC.MVC.Controllers
@@ -32,7 +30,7 @@ namespace POC.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(Login login)
+        public async Task<IActionResult> Login(LoginModel login)
         {
             try
             {
@@ -47,6 +45,7 @@ namespace POC.MVC.Controllers
                     var Role = json["role"].ToString();
                     var RefershToken = json["refreshToken"].ToString();
                     HttpContext.Session.SetString("Role", Role);
+
                     HttpContext.Session.SetString("Token", token);
                     HttpContext.Session.SetString("RefreshToken", RefershToken);
                     HttpContext.Session.SetString("UserName", login.Name);
@@ -55,8 +54,14 @@ namespace POC.MVC.Controllers
                     {
                         var userId = await userIdResponse.Content.ReadAsStringAsync();
                         HttpContext.Session.SetString("UserId", userId);
+                        
                         ViewBag.Error = null;
-                        return RedirectToAction("Products", "ProductControllerMVC");
+                        if (Role =="Admin")
+                        {
+                            return RedirectToAction("Index","Admin");
+
+                        }
+                        return RedirectToAction("Products", "Product");
                     }
                     else
                     {

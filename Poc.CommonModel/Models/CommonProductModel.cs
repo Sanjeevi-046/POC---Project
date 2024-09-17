@@ -14,7 +14,7 @@ namespace POC.CommonModel.Models
 
         public string Description { get; set; }
 
-        public byte[] ProductImage { get; set; }
+        //public byte[]? ProductImage { get; set; }
 
         public bool IsAvailable { get; set; }
 

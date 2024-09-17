@@ -1,0 +1,79 @@
+﻿@model List<POC.CommonModel.Models.CommonAddressModel>
+
+@{
+    ViewData["Title"] = "Select Address";
+}
+<head>
+    <link href="~/css/stylesheet1.css" rel="stylesheet" />
+    <link href="~/css/addresspanel.css" rel="stylesheet" />
+    <link href="~/css/toastmessage.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="address-container">
+        <!-- Add New Address Box with Link -->
+        <a asp-action="Add" asp-controller="Address" class="address-box add-address-box">
+            <div class="add-symbol">+</div>
+            <div class="add-text">Add New Address</div>
+        </a>
+        <!-- Address Box -->
+        @if (Model != null && Model.Any())
+        {
+            <form method="post" asp-action="SelectAddress" asp-controller="Address">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <!-- Wrap address and select button in a container -->
+                    <div class="address-select-container">
+                        <!-- Select Button (outside the address box) -->
+                        <div class="select-address">
+                            <input type="radio" name="selectedAddressId" value="@Model[i].Id" id="address_@Model[i].Id" />
+                            <label for="address_@Model[i].Id">Select</label>
+                        </div>
+
+                        <!-- Address Box -->
+                        <div class="address-box @(Model[i].IsDefault ? "default-address" : "")">
+                            @if (Model[i].IsDefault)
+                            {
+                                <div class="default-label">Default Address</div>
+                            }
+                            <div class="address-content">
+                                <ul class="address-list">
+                                    <li><span class="address-name">@Model[i].FullName</span></li>
+                                    <li><span>@Model[i].AreaStreet</span></li>
+                                    <li><span>@Model[i].Landmark</span></li>
+                                    <li><span>@Model[i].City , @Model[i].State @Model[i].Pincode</span></li>
+                                    <li><span>@Model[i].Country</span></li>
+                                    <li><span>Phone number: @Model[i].MobileNumber</span></li>
+                                </ul>
+                                <div class="address-actions">
+                                    <a asp-action="Edit" asp-controller="Address" asp-route-id="@Model[i].Id" class="action-link">Edit</a>
+                                    <a asp-action="Delete" asp-controller="Address" asp-route-id="@Model[i].Id" class="action-link" onclick="return confirm('Are you sure you want to delete this Address?');">Delete</a>
+                                    @if (Model[i].IsDefault != true)
+                                    {
+                                        <a asp-action="SetAsDefault" asp-controller="Address" asp-route-AddressId="@Model[i].Id" class="action-link">Set as Default Address</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </form>
+                <!-- Next Button to proceed to payment -->
+                <div class="next-button">
+                    <button type="submit" class="btn btn-primary">Next</button>
+                </div>
+            
+        }
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toast = document.querySelector('.toast');
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+            }
+        });
+    </script>
+</body>

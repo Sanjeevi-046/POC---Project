@@ -10,5 +10,6 @@ namespace POC.ServiceLayer.Service
     public interface IPayment
     {
         Task<bool> DoPayment(CommonPaymentModel payment);
+        Task<bool> UpdatePaymentAddress(int AddressId, int PaymentID);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace POC.CommonModel.Models
 {
@@ -16,6 +17,21 @@ namespace POC.CommonModel.Models
         public int? Id { get; set; }
 
         public decimal OrderPrice { get; set; }
+
+        [Column("isDelivered")]
+        public bool IsDelivered { get; set; }
+
+        [Column("isCancelled")]
+        public bool IsCancelled { get; set; }
+
+        public int ProductQuantity { get; set; }
+
+        [Column("AddressID")]
+        public int? AddressId { get; set; }
+
+        public string ProductList { get; set; }
+
+        public string ProductQuantityList { get; set; }
 
 
     }

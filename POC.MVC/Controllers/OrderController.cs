@@ -18,6 +18,16 @@ namespace POC.MVC.Controllers
             _authorizedRequest = authorizedRequest;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Orders()
+        {
+            var userId = HttpContext.Session.GetString("UserId");
+
+            var httpResponse = await _authorizedRequest.SendAuthorizedRequestAsync(HttpMethod.Get, $"");
+
+            return View();
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> AddOrder(OrderModel order, int orderedProduct)
@@ -28,8 +38,6 @@ namespace POC.MVC.Controllers
                 var userName = HttpContext.Session.GetString("UserName");
                 ViewBag.UserName = userName;
                 StringContent content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
-                //_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                //HttpResponseMessage response = await _httpClient.PostAsync(baseAddress + $"createOrder?orderedProduct={orderedProduct}", content);
                 var response = await _authorizedRequest.SendAuthorizedRequestAsync(HttpMethod.Post, $"Order/Order?orderedProduct={orderedProduct}", content);
 
                 if (response.IsSuccessStatusCode)
@@ -38,7 +46,7 @@ namespace POC.MVC.Controllers
                     var Message = await response.Content.ReadAsStringAsync();
                     ViewBag.Error = null;
 
-                    return RedirectToAction("DoPayment", "Payment" , new {Id = Message});
+                    return RedirectToAction("SelectAddress", "Address", new { Id = Message });
                 }
                 else
                 {
@@ -52,28 +60,29 @@ namespace POC.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOrderList(List<CommonProductQuantityModel> productQuantityModel)
         {
-           var userName = HttpContext.Session.GetString("UserName");
-            ViewBag.UserName = userName;
-            StringContent content = new StringContent(JsonConvert.SerializeObject(productQuantityModel), Encoding.UTF8, "application/json");
-            var response = await _authorizedRequest.SendAuthorizedRequestAsync(HttpMethod.Post, $"Order/orderList", content);
+            
+            
+                var userName = HttpContext.Session.GetString("UserName");
+                ViewBag.UserName = userName;
+                StringContent content = new StringContent(JsonConvert.SerializeObject(productQuantityModel), Encoding.UTF8, "application/json");
+                var response = await _authorizedRequest.SendAuthorizedRequestAsync(HttpMethod.Post, $"Order/orderList", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var Message = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var Message = await response.Content.ReadAsStringAsync();
 
-                return RedirectToAction("SelectAddress", "Address", new { Id = Message });
-            }
-            else
-            {
-                return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
-            }
+                    return RedirectToAction("SelectAddress", "Address", new { Id = Message });
+                }
+                else
+                {
+                    return RedirectToAction("UnAuthorized", "ErrorHandling", new { statusCode = response.StatusCode.ToString() });
+                }
             
         }
         [HttpPost]
         public async Task<IActionResult> SaveAsDraft(OrderModel order, int orderedProduct, string pincode = "draft")
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
-            //var response = await SendAuthorizedRequestAsync(HttpMethod.Post, baseAddress + $"Order?orderedProduct={orderedProduct}&pincode={pincode}", content); //Order?orderedProduct=3&pincode=sanj
             var token = HttpContext.Session.GetString("Token");
             HttpResponseMessage response = await _authorizedRequest.SendAuthorizedRequestAsync( HttpMethod.Post,$"Order/Draft?orderedProduct={orderedProduct}&pincode={pincode}", content);
             if (response.IsSuccessStatusCode)

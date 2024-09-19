@@ -18,17 +18,15 @@
         <!-- Address Box -->
         @if (Model != null && Model.Any())
         {
-            <form method="post" asp-action="SelectAddress" asp-controller="Address">
+            <form asp-action="DoPayment" asp-controller="Payment" method="get">
                 @for (int i = 0; i < Model.Count; i++)
                 {
                     <!-- Wrap address and select button in a container -->
                     <div class="address-select-container">
                         <!-- Select Button (outside the address box) -->
                         <div class="select-address">
-                            <input type="radio" name="selectedAddressId" value="@Model[i].Id" id="address_@Model[i].Id" />
-                            <label for="address_@Model[i].Id">Select</label>
+                            <input type="radio" name="AddressId" value="@Model[i].Id" id="address_@Model[i].Id" required />
                         </div>
-
                         <!-- Address Box -->
                         <div class="address-box @(Model[i].IsDefault ? "default-address" : "")">
                             @if (Model[i].IsDefault)
@@ -47,7 +45,7 @@
                                 <div class="address-actions">
                                     <a asp-action="Edit" asp-controller="Address" asp-route-id="@Model[i].Id" class="action-link">Edit</a>
                                     <a asp-action="Delete" asp-controller="Address" asp-route-id="@Model[i].Id" class="action-link" onclick="return confirm('Are you sure you want to delete this Address?');">Delete</a>
-                                    @if (Model[i].IsDefault != true)
+                                    @if (!Model[i].IsDefault)
                                     {
                                         <a asp-action="SetAsDefault" asp-controller="Address" asp-route-AddressId="@Model[i].Id" class="action-link">Set as Default Address</a>
                                     }
@@ -56,24 +54,13 @@
                         </div>
                     </div>
                 }
-            </form>
+                <input type="hidden" name="PaymentID" value="@TempData["PaymentID"]" />
+
                 <!-- Next Button to proceed to payment -->
-                <div class="next-button">
-                    <button type="submit" class="btn btn-primary">Next</button>
+                <div class="next-button-container">
+                    <button type="submit" class="next-button">Next</button>
                 </div>
-            
+            </form>
         }
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toast = document.querySelector('.toast');
-            if (toast) {
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 5000);
-            }
-        });
-    </script>
 </body>

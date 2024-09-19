@@ -16,5 +16,9 @@ namespace POC.ServiceLayer.Service
         {
             return await _paymentRepository.DoPayment(payment);
         }
+        public async Task<bool> UpdatePaymentAddress(int AddressId, int PaymentID)
+        {
+            return await _paymentRepository.UpdatePaymentAddress(AddressId, PaymentID);
+        }
     }
 }

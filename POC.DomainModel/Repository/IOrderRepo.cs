@@ -14,5 +14,7 @@ namespace POC.DataLayer.Repository
         Task<UserValidationResult> CreateOrder(CommonOrderModel order, int orderedProduct);
         Task<UserValidationResult> CreateOrder(List<CommonProductQuantityModel> cartOrder);
         Task<UserValidationResult> CreateOrder(CommonTemporderTable order, int orderedProduct, string SaveAsaDraft);
+
+        Task<IEnumerable<dynamic>> getUserorders(int Id);
     }
 }

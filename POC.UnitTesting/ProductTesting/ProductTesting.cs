@@ -2,7 +2,6 @@
 using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
 using POC.DataLayer.Repository;
-using POC.DomainModel.Models;
 using POC.ServiceLayer.Service;
 
 namespace POC.UnitTesting.ProductTesting

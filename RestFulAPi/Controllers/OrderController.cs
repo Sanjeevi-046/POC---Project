@@ -7,6 +7,7 @@ namespace POC.Api.Controllers
     [Route("api/Order")]
     [ApiController]
     [Authorize(Policy = "AdminOrCustomer")]
+    
     public class OrderController : ControllerBase
     {
         private readonly IOrder _orderService;
@@ -14,6 +15,29 @@ namespace POC.Api.Controllers
         {
             _orderService = orderService;
         }
+        /// <summary>
+        ///  get the user's order
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>
+        ///     list of order item in CommonProductQuantityModel 
+        /// </returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetUserOrders(int Id)
+        //{
+        //    try
+        //    {
+                
+        //    }
+        //    catch 
+        //    { 
+            
+        //    }
+        //}
+
+
+
+
 
         [HttpPost("Order")]
         public async Task<IActionResult> CreateOrder( CommonOrderModel order, int orderedProduct)

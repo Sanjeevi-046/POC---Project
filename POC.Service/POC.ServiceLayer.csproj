@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Poc.CommonModel\POC.CommonModel.csproj" />
     <ProjectReference Include="..\POC.DomainModel\POC.DataLayer.csproj" />
-    <ProjectReference Include="..\POC.DomainModel\POC.DomainModel.csproj" />
   </ItemGroup>
 
 </Project>

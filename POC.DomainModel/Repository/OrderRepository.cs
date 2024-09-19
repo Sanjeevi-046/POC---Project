@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.EntityFrameworkCore;
 using Poc.CommonModel.Models;
 using POC.CommonModel.Models;
@@ -14,6 +15,25 @@ namespace POC.DataLayer.Repository
             _context = context;
             _mapper = mapper;
         }
+
+        public async Task<IEnumerable<dynamic>> getUserorders(int Id)
+        {
+           var result = await (from order in _context.Orders
+                   join payment in _context.Payments on order.OrderId equals payment.OrderId
+                   where order.UserId == Id
+                   select new
+                   {
+                       Order = order,
+                       Payment = payment
+                   }).ToListAsync();
+
+            return result;
+        }
+
+
+
+
+
         public async Task<UserValidationResult> CreateOrder(List<CommonProductQuantityModel> cartOrder)
         {
             try
@@ -56,7 +76,7 @@ namespace POC.DataLayer.Repository
                     Amount = TotalAmount,
                     UserId = cartOrder[0].UserID,
                 };
-                _context.Payments.Add(payment);
+                await _context.Payments.AddAsync(payment);
                 await _context.SaveChangesAsync();
 
                 return new UserValidationResult{IsValid = true, PaymentId = payment.Id};
@@ -69,19 +89,23 @@ namespace POC.DataLayer.Repository
         {
             try
             {
-                var orderData = _mapper.Map<Order>(order);
-                order.OrderDate = DateTime.Now;
-                _context.Orders.Add(orderData);
+                var defaultAddress = await (from address in _context.AddressDetails
+                                            where address.UserId == order.UserId && address.IsDefault == true
+                                            select address).FirstOrDefaultAsync();
 
-                var product = await _context.Products.FindAsync(order.ProductId);
-                if (product != null)
-                {
-                    product.ProductAvailable -= orderedProduct;
-                    if (product.ProductAvailable <= 0)
-                    {
-                        product.IsAvailable = false;
-                    }
-                }
+                var newOrder = new Order();
+                var TotalAmount = order.OrderPrice;
+                newOrder.ProductList = order.ProductId.ToString();
+                newOrder.ProductQuantityList = order.ProductQuantity.ToString();
+                newOrder.UserId = order.UserId;
+                newOrder.ProductList = newOrder.ProductList.TrimEnd(',');
+                newOrder.ProductQuantityList = newOrder.ProductQuantityList.TrimEnd(',');
+                newOrder.OrderDate = DateTime.Now;
+                newOrder.OrderPrice = TotalAmount;
+                newOrder.AddressId = defaultAddress.Id;
+                await _context.Orders.AddAsync(newOrder);
+                await _context.SaveChangesAsync();
+
                 await _context.SaveChangesAsync();
 
                 var payment = new Payment
@@ -91,11 +115,11 @@ namespace POC.DataLayer.Repository
                     ExpiryMonth = 0,
                     ExpiryYear = 0,
                     PaymentReceived = false,
-                    OrderId = orderData.OrderId,
-                    Amount = orderData.OrderPrice * orderedProduct,
-                    UserId = orderData.UserId,
+                    OrderId = newOrder.OrderId,
+                    Amount = TotalAmount ,
+                    UserId = newOrder.UserId,
                 };
-                _context.Payments.Add(payment);
+                await _context.Payments.AddAsync(payment);
                 await _context.SaveChangesAsync();
 
                 return new UserValidationResult { IsValid = true, PaymentId = payment.Id };

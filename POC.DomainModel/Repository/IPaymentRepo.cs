@@ -10,5 +10,6 @@ namespace POC.DataLayer.Repository
     public interface IPaymentRepo
     {
         Task<bool> DoPayment(CommonPaymentModel payment);
+        Task<bool> UpdatePaymentAddress(int AddressId, int PaymentID);
     }
 }

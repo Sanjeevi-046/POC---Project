@@ -48,8 +48,6 @@ namespace POC.CommonModel.Models
         [RegularExpression(@"^\d{3}$", ErrorMessage = "CVV must be exactly 3 digits.")]
         public short Cvv { get; set; }
 
-        [Required(ErrorMessage = "Amount is required.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than zero.")]
         public decimal Amount { get; set; }
 
         public int? UserId { get; set; }

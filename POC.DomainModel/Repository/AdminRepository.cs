@@ -7,6 +7,12 @@ using POC.DataLayer.Context;
 using POC.DataLayer.Models;
 using System.Data;
 using System.Text;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
+using MigraDoc.DocumentObjectModel.Visitors;
+
+
+
 
 
 namespace POC.DataLayer.Repository
@@ -15,10 +21,15 @@ namespace POC.DataLayer.Repository
     {
         private readonly DemoProjectContext _context;
         private readonly AdminDbContext _adminContext;
-        public AdminRepository(DemoProjectContext Context, AdminDbContext adminContext)
+        //private readonly IRazorViewToStringRenderer _engine;
+       // private readonly IGeneratePdf _generatePdf;
+
+
+        public AdminRepository(DemoProjectContext Context, AdminDbContext adminContext)//, IGeneratePdf generatePdf
         {
             _context = Context;
             _adminContext = adminContext;
+            //_generatePdf = generatePdf;
         }
 
         public async Task<CommonPaginationModel> GetOrderAsync(string sortColumnName = "Order ID", string sortOrder = "asc", string Status = "", string SearchName = "", DateTime? fromDate = null, DateTime? toDate = null, int pageNumber = 1)
@@ -230,8 +241,159 @@ namespace POC.DataLayer.Repository
             sb.Append("</body></html>");
 
             var htmlContent = sb.ToString();
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(htmlContent));
-            return stream;
+
+
+            var document = new Document();
+            var section = document.AddSection();
+            
+
+            // Add company information
+            section.AddParagraph("Invoice", "Heading1");
+            section.AddParagraph($"Company: {invoice.CompanyName}");
+            section.AddParagraph($"Address: {invoice.CompanyAddress}");
+            section.AddParagraph($"Phone: {invoice.CompanyPhone}");
+            section.AddParagraph();
+
+            // Add billing information
+            section.AddParagraph("Bill To:", "Heading2");
+            section.AddParagraph($"Name: {invoice.BillToName}");
+            section.AddParagraph($"Address: {invoice.BillToAddress}");
+            section.AddParagraph($"Phone: {invoice.BillToPhone}");
+            section.AddParagraph();
+
+            // Add invoice details
+            section.AddParagraph($"Invoice Number: {invoice.InvoiceNumber}");
+            section.AddParagraph($"Date: {invoice.InvoiceDate}");
+            section.AddParagraph();
+
+            // Create a table for items
+            var table = section.AddTable();
+            table.RightPadding = 10;
+            table.Style = "Table";
+            table.Borders.Width = 0.25;
+            table.Borders.Left.Width = 0.5;
+            table.Borders.Right.Width = 0.5;
+            table.Rows.LeftIndent = 0;
+            table.Borders.Width = 0.75;
+            table.AddColumn(Unit.FromCentimeter(7)); // Description
+            table.AddColumn(Unit.FromCentimeter(4)); // Quantity
+            table.AddColumn(Unit.FromCentimeter(4)); // Unit Price
+            table.AddColumn(Unit.FromCentimeter(4)); // Total Price
+
+            // Add table header
+            var row = table.AddRow();
+            row.Cells[0].AddParagraph("Description");
+            row.Cells[1].AddParagraph("Quantity");
+            row.Cells[2].AddParagraph("Unit Price");
+            row.Cells[3].AddParagraph("Total Price");
+
+            // Add items to table
+            foreach (var item in invoice.Items)
+            {
+                row = table.AddRow();
+                row.Cells[0].AddParagraph(item.Description);
+                row.Cells[1].AddParagraph(item.Quantity.ToString());
+                row.Cells[2].AddParagraph(item.UnitPrice.ToString("C"));
+                row.Cells[3].AddParagraph((item.Quantity * item.UnitPrice).ToString("C"));
+            }
+
+            // Add summary
+            section.AddParagraph();
+            section.AddParagraph($"Subtotal: {invoice.Subtotal:C}");
+            section.AddParagraph($"Tax ({invoice.TaxRate}%): {invoice.TaxAmount:C}");
+            section.AddParagraph($"Total: {invoice.Total:C}");
+
+            // Render the document to a PDF file
+            var pdfRenderer = new PdfDocumentRenderer(true);
+            pdfRenderer.Document = document;
+            pdfRenderer.RenderDocument();
+
+            var memoryStream = new MemoryStream();
+
+            pdfRenderer.PdfDocument.Save(memoryStream, false);
+
+            memoryStream.Position = 0;
+
+            return memoryStream;
+
+
+
+
+
+
+
+
+
+
+
+
+            //var pdf = WkhtmlDriver.Convert(null,null, htmlContent);
+            //var pdfByte = _generatePdf.GetPDF(htmlContent);
+
+
+            //PdfDocument pdfDocument = PdfGenerator.GeneratePdf(htmlContent, PdfSharp.PageSize.A4);
+
+            //using (var memoryStream = new MemoryStream())
+            //{
+            //    pdfDocument.Save(memoryStream, false);
+
+            //    memoryStream.Position = 0;
+            //    return memoryStream;
+            //}
+
+            //string tempHtmlPath = Path.GetTempFileName();
+            //File.WriteAllText(tempHtmlPath, htmlContent);
+
+            //string outputPath = "html_to_pdf.pdf";
+
+            //ProcessStartInfo startInfo = new ProcessStartInfo
+            //{
+            //    FileName = "wkhtmltopdf",
+            //    Arguments = $"\"{tempHtmlPath}\" \"{outputPath}\"",
+            //    UseShellExecute = false
+            //};
+
+            //using (Process process = new Process { StartInfo = startInfo })
+            //{
+            //    process.Start();
+            //    process.WaitForExit();  // Ensure the process completes
+            //}
+
+            //File.Delete(tempHtmlPath);
+
+
+            // Create a new HTML-to-PDF converter
+            //var converter = new BasicConverter(new PdfTools());
+
+            //// Create the PDF document
+            //var document = new HtmlToPdfDocument
+            //{
+            //    GlobalSettings = { DocumentTitle = "HTML to PDF", PaperSize = PaperKind.A4 },
+            //    Objects = { new ObjectSettings { HtmlContent = htmlContent } }
+            //};
+
+            //// Convert the document to a PDF
+            //byte[] pdfBytes = converter.Convert(document);
+            //memoryStream.Write(pdfBytes, 0, pdfBytes.Length);
+            //memoryStream.Position = 0;
+
+            //// Save the PDF to file
+            //File.WriteAllBytes("html_to_pdf.pdf", pdfBytes);
+
+            //var memoryStream = new MemoryStream();
+
+           // var renderer = new ChromePdfRenderer();
+           // var pdf = renderer.RenderHtmlAsPdf(htmlContent);
+            
+           // string tempHtmlPath = Path.GetTempFileName();
+           // pdf.SaveAs(tempHtmlPath);
+           // byte[] byteArray = Encoding.ASCII.GetBytes(tempHtmlPath);
+           //memoryStream.Write(byteArray, 0, byteArray.Length);
+           // memoryStream.Position = 0;
+           
+           // return memoryStream;
+
+
         }
 
         public async Task<MemoryStream> DownloadExcel()

@@ -117,7 +117,7 @@ internal class Program
         builder.Services.AddTransient<IAdmin, AdminService>();
         builder.Services.AddTransient<IAdminRepo, AdminRepository>();
 
-
+ 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

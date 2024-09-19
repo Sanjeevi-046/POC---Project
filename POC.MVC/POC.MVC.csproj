@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Address\SelectAddress.cshtml" />
     <Content Remove="Views\Test.cshtml" />
   </ItemGroup>
 
@@ -27,22 +26,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Address\SelectAddress.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Test.cshtml" />
     <_ContentIncludedByDefault Remove="wwwroot\css\AddAdress.css" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Pages\Test.cshtml" />
-    <None Include="Views\Address\SelectAddress.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Address\SelectAddress.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -1,11 +1,5 @@
 ﻿using Poc.CommonModel.Models;
-using POC.CommonModel.Models;
 using POC.DataLayer.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace POC.ServiceLayer.Service
 {

@@ -34,8 +34,8 @@ namespace POC.Api.Controllers
                 return NotFound();
             }
 
-            var fileName = $"Invoice_{Id}.HTML";
-            var contentType = "text/html";
+            var fileName = $"Invoice_{Id}.pdf";
+            var contentType = "application/pdf";
 
             return File(pdfStream, contentType, fileName);
         }
